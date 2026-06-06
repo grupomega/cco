@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GRUPO MEGA – Tabela de Preços com CPU 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root {
+  --mega-laranja:#E8520A; --mega-laranja-cl:#F4885A; --mega-laranja-bg:#FFF3EE;
+  --mega-cinza-esc:#1E1E1E; --mega-cinza-med:#3A3A3A; --mega-cinza-sub:#5A5A5A;
+  --mega-cinza-bdr:#D0D0D0; --mega-cinza-bg:#F5F5F5; --mega-branco:#FFFFFF;
+  --mega-verde:#1A7A3C; --mega-verde-cl:#D4EDDA;
+  --mega-vermelho:#C0392B; --mega-vermelho-cl:#FADBD8;
+  --mega-amarelo:#D4890A; --mega-amarelo-cl:#FEF3CD;
+  --mega-azul:#1A4A6E; --mega-azul-cl:#D1E8F5;
+  --font-display:'Barlow Condensed',sans-serif;
+  --font-body:'DM Sans',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --radius-sm:4px; --radius-md:8px; --radius-lg:16px;
+  --shadow-card:0 2px 8px rgba(0,0,0,.10);
+  --shadow-deep:0 8px 32px rgba(0,0,0,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--mega-cinza-bg);font-family:var(--font-body);font-size:13px;color:var(--mega-cinza-med)}
+
+/* HEADER */
+header{background:var(--mega-cinza-esc);border-bottom:3px solid var(--mega-laranja);padding:14px 32px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.header-brand{display:flex;align-items:baseline;gap:16px}
+.header-brand .nome{font-family:var(--font-display);font-size:30px;font-weight:800;color:var(--mega-laranja);letter-spacing:3px}
+.header-brand .sub{font-family:var(--font-display);font-size:13px;color:#888;letter-spacing:2px;text-transform:uppercase}
+.header-right{font-family:var(--font-mono);font-size:12px;color:#666}
+
+/* TOOLBAR */
+.toolbar{background:var(--mega-branco);border-bottom:1px solid var(--mega-cinza-bdr);padding:12px 32px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.toolbar input{flex:1;min-width:220px;padding:8px 14px;border:1px solid var(--mega-cinza-bdr);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:13px;background:#fafafa}
+.toolbar input:focus{outline:none;border-color:var(--mega-laranja);box-shadow:0 0 0 2px var(--mega-laranja-bg)}
+.toolbar select{padding:8px 12px;border:1px solid var(--mega-cinza-bdr);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:13px;background:#fafafa;cursor:pointer}
+.toolbar select:focus{outline:none;border-color:var(--mega-laranja)}
+.btn{padding:8px 18px;border:none;border-radius:var(--radius-sm);font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .15s ease}
+.btn-primary{background:var(--mega-laranja);color:#fff}
+.btn-primary:hover{background:#c4440a}
+.btn-outline{background:transparent;color:var(--mega-cinza-med);border:1px solid var(--mega-cinza-bdr)}
+.btn-outline:hover{background:var(--mega-cinza-bg);border-color:var(--mega-cinza-sub)}
+.btn-green{background:var(--mega-verde);color:#fff}
+.btn-green:hover{background:#115528}
+.contador{font-family:var(--font-mono);font-size:12px;color:var(--mega-cinza-sub);margin-left:auto}
+
+/* STATS BAR */
+.stats-bar{background:var(--mega-cinza-esc);padding:10px 32px;display:flex;gap:32px;flex-wrap:wrap}
+.stat-item{display:flex;flex-direction:column}
+.stat-label{font-family:var(--font-display);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#888}
+.stat-value{font-family:var(--font-mono);font-size:18px;font-weight:600;color:#fff}
+.stat-value.orange{color:var(--mega-laranja)}
+
+/* MAIN GRID */
+.main{padding:24px 32px}
+
+/* TABLE */
+.table-wrap{background:var(--mega-branco);border-radius:var(--radius-md);box-shadow:var(--shadow-card);overflow:hidden;margin-bottom:16px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+thead tr{background:var(--mega-cinza-esc);color:#fff}
+thead th{padding:11px 14px;font-family:var(--font-display);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;text-align:left;white-space:nowrap;cursor:pointer;user-select:none}
+thead th:hover{background:#2a2a2a}
+thead th.sort-asc::after{content:" ▲";color:var(--mega-laranja)}
+thead th.sort-desc::after{content:" ▼";color:var(--mega-laranja)}
+tbody tr{border-bottom:1px solid #f0f0f0;transition:background .1s}
+tbody tr:nth-child(even){background:#fafafa}
+tbody tr:hover{background:var(--mega-laranja-bg)!important}
+tbody tr.expanded{background:var(--mega-laranja-bg)!important}
+td{padding:9px 14px;vertical-align:middle}
+td.mono{font-family:var(--font-mono);text-align:right;font-weight:600}
+td.mono.negativo{color:var(--mega-vermelho)}
+td.mono.positivo{color:var(--mega-verde)}
+.td-codigo{font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--mega-azul);white-space:nowrap}
+.td-descricao{max-width:320px}
+.td-cat span{font-family:var(--font-display);font-size:10px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:20px;text-transform:uppercase;white-space:nowrap}
+.td-expand{text-align:center;cursor:pointer;color:var(--mega-cinza-sub);font-size:16px;user-select:none;transition:transform .2s}
+td.expand-open .td-expand{transform:rotate(90deg);color:var(--mega-laranja)}
+
+/* CAT BADGES */
+.cat-SH{background:#D1E8F5;color:#1A4A6E}
+.cat-SV{background:#D4EDDA;color:#1A7A3C}
+.cat-DM{background:#FADBD8;color:#C0392B}
+.cat-SA{background:#FEF3CD;color:#D4890A}
+.cat-ADM{background:#EAD9F7;color:#5C2A7E}
+
+/* BDI chip */
+.bdi-chip{font-family:var(--font-mono);font-size:10px;background:#e8e8e8;padding:2px 7px;border-radius:20px;font-weight:600;color:var(--mega-cinza-sub)}
+
+/* EXPANDABLE CPU DETAIL */
+.cpu-row td{padding:0!important;background:var(--mega-cinza-bg);border-top:2px solid var(--mega-laranja)!important}
+.cpu-detail{padding:16px 20px 20px 20px}
+.cpu-title{font-family:var(--font-display);font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--mega-cinza-sub);margin-bottom:12px}
+.cpu-table{width:100%;border-collapse:collapse;font-size:12px}
+.cpu-table th{padding:6px 12px;font-family:var(--font-display);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;background:var(--mega-cinza-esc);color:#ccc;text-align:left}
+.cpu-table td{padding:7px 12px;border-bottom:1px solid #e8e8e8}
+.cpu-table tr:last-child td{border-bottom:none}
+.cpu-tipo-MATERIAL{color:var(--mega-azul);font-weight:600;font-size:10px;font-family:var(--font-display);letter-spacing:1px;text-transform:uppercase}
+.cpu-tipo-MO{color:var(--mega-verde);font-weight:600;font-size:10px;font-family:var(--font-display);letter-spacing:1px;text-transform:uppercase}
+.cpu-tipo-EQUIP{color:#7B3F00;font-weight:600;font-size:10px;font-family:var(--font-display);letter-spacing:1px;text-transform:uppercase}
+.cpu-tipo-FIXO,.cpu-tipo-FRETE{color:var(--mega-cinza-sub);font-weight:600;font-size:10px;font-family:var(--font-display);letter-spacing:1px;text-transform:uppercase}
+.cpu-subtotal{font-family:var(--font-mono);text-align:right;font-weight:600}
+.cpu-summary{display:flex;gap:24px;margin-top:14px;padding-top:12px;border-top:2px solid var(--mega-cinza-bdr);flex-wrap:wrap}
+.cpu-sum-item{display:flex;flex-direction:column;gap:2px}
+.cpu-sum-label{font-family:var(--font-display);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#888}
+.cpu-sum-value{font-family:var(--font-mono);font-size:20px;font-weight:700}
+.cpu-sum-value.cd{color:var(--mega-azul)}
+.cpu-sum-value.bdi{color:var(--mega-amarelo)}
+.cpu-sum-value.pv{color:var(--mega-laranja)}
+
+/* WATERFALL BAR */
+.wf-bar{height:6px;border-radius:3px;margin-top:4px}
+.wf-mat{background:var(--mega-azul)} .wf-mo{background:var(--mega-verde)} .wf-eq{background:#9B6000}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:60px;color:var(--mega-cinza-sub);font-family:var(--font-display);font-size:16px;letter-spacing:2px;text-transform:uppercase}
+
+/* MODAL EXPORT */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:999;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:#fff;border-radius:var(--radius-lg);box-shadow:var(--shadow-deep);padding:32px;min-width:420px;max-width:580px;width:90%}
+.modal h2{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--mega-cinza-esc);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.modal p{color:var(--mega-cinza-sub);font-size:13px;margin-bottom:20px}
+.export-options{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.export-opt{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--mega-cinza-bdr);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s}
+.export-opt:hover{border-color:var(--mega-laranja);background:var(--mega-laranja-bg)}
+.export-opt input{accent-color:var(--mega-laranja);width:16px;height:16px}
+.export-opt label{cursor:pointer;font-weight:500}
+.modal-actions{display:flex;gap:12px;justify-content:flex-end}
+
+/* PROGRESS */
+.progress-toast{position:fixed;bottom:24px;right:24px;background:var(--mega-cinza-esc);color:#fff;padding:14px 20px;border-radius:var(--radius-md);font-family:var(--font-mono);font-size:13px;box-shadow:var(--shadow-deep);z-index:9999;display:none;border-left:3px solid var(--mega-verde)}
+
+@media(max-width:900px){
+  header{padding:12px 16px;flex-direction:column;gap:8px;align-items:flex-start}
+  .toolbar{padding:10px 16px}
+  .main{padding:16px}
+  .stats-bar{padding:10px 16px;gap:20px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-brand">
+    <span class="nome">GRUPO MEGA</span>
+    <span class="sub">Tabela de Preços · CPU por Item · 2026</span>
+  </div>
+  <div class="header-right" id="hdate"></div>
+</header>
+
+<div class="stats-bar">
+  <div class="stat-item"><span class="stat-label">Total Itens</span><span class="stat-value orange" id="st-total">—</span></div>
+  <div class="stat-item"><span class="stat-label">Itens Visíveis</span><span class="stat-value" id="st-visivel">—</span></div>
+  <div class="stat-item"><span class="stat-label">Menor Preço</span><span class="stat-value" id="st-min">—</span></div>
+  <div class="stat-item"><span class="stat-label">Maior Preço</span><span class="stat-value" id="st-max">—</span></div>
+  <div class="stat-item"><span class="stat-label">Categoria</span><span class="stat-value" id="st-cat">TODAS</span></div>
+</div>
+
+<div class="toolbar">
+  <input type="text" id="busca" placeholder="🔍  Buscar por código, descrição, componente..." autocomplete="off">
+  <select id="filtro-cat">
+    <option value="">Todas as Categorias</option>
+    <option value="Dispositivos de Proteção">Dispositivos de Proteção</option><option value="Equipes e Composições">Equipes e Composições</option><option value="Sinalização Horizontal">Sinalização Horizontal</option><option value="Sinalização Vertical">Sinalização Vertical</option><option value="Sinalização de Apoio / Provisória">Sinalização de Apoio / Provisória</option>
+  </select>
+  <select id="filtro-tipo">
+    <option value="">Todos os Tipos</option>
+    <option value="Pintura Fria – Base Solvente">Base Solvente</option>
+    <option value="Metilmetacrilato (MMA)">MMA</option>
+    <option value="Pintura Fria – Base Água">Base Água</option>
+  </select>
+  <button class="btn btn-outline" onclick="expandAll()">⊞ Expandir Todos</button>
+  <button class="btn btn-outline" onclick="collapseAll()">⊟ Recolher</button>
+  <button class="btn btn-primary" onclick="openExport()">⬇ Exportar</button>
+  <span class="contador" id="contador">— itens</span>
+</div>
+
+<div class="main">
+  <div class="table-wrap">
+    <table id="tabela">
+      <thead>
+        <tr>
+          <th style="width:36px"></th>
+          <th onclick="sortBy('codigo')">Código</th>
+          <th onclick="sortBy('descricao')">Descrição</th>
+          <th onclick="sortBy('unidade')">Un.</th>
+          <th onclick="sortBy('categoria')">Categoria</th>
+          <th onclick="sortBy('custo_direto')" style="text-align:right">Custo Direto</th>
+          <th style="text-align:center">BDI</th>
+          <th onclick="sortBy('preco_venda')" style="text-align:right">Preço de Venda</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="empty" id="empty" style="display:none">Nenhum item encontrado</div>
+  </div>
+</div>
+
+<!-- MODAL EXPORTAR -->
+<div class="modal-bg" id="modal-export">
+  <div class="modal">
+    <h2>Exportar Dados</h2>
+    <p>Selecione o formato e o escopo da exportação:</p>
+    <div class="export-options">
+      <div class="export-opt">
+        <input type="radio" name="fmt" id="fmt-xlsx" value="xlsx" checked>
+        <label for="fmt-xlsx"><strong>Excel (.xlsx)</strong> — Tabela resumo + aba CPU detalhada por item</label>
+      </div>
+      <div class="export-opt">
+        <input type="radio" name="fmt" id="fmt-csv" value="csv">
+        <label for="fmt-csv"><strong>CSV (.csv)</strong> — Dados tabulares simples para importação</label>
+      </div>
+    </div>
+    <div class="export-options">
+      <div class="export-opt">
+        <input type="radio" name="scope" id="sc-all" value="all" checked>
+        <label for="sc-all">Todos os itens ({len(rows)} itens)</label>
+      </div>
+      <div class="export-opt">
+        <input type="radio" name="scope" id="sc-vis" value="visible">
+        <label for="sc-vis">Apenas itens visíveis (filtro atual)</label>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeExport()">Cancelar</button>
+      <button class="btn btn-green" onclick="doExport()">⬇ Exportar Agora</button>
+    </div>
+  </div>
+</div>
+
+<div class="progress-toast" id="toast">✓ Exportação concluída!</div>
+
+<script>
+const ALL_DATA = [{"codigo": "ADM-002", "descricao": "Operador de máquina de pintura – hora trabalhada", "unidade": "h", "categoria": "Equipes e Composições", "subcategoria": "", "custo_direto": 40.34, "bdi": 0.25, "preco_venda": 50.43, "componentes": [{"componente": "Salário operador de máquina", "tipo": "MO", "qtd": 1.0, "unid": "h", "custo_unit": 22.0, "subtotal": 22.0}, {"componente": "Encargos sociais (72%)", "tipo": "MO", "qtd": 1.0, "unid": "h", "custo_unit": 15.84, "subtotal": 15.84}, {"componente": "EPI + adicional operador", "tipo": "MATERIAL", "qtd": 1.0, "unid": "h", "custo_unit": 2.5, "subtotal": 2.5}]}, {"codigo": "ADM-003", "descricao": "Encarregado de sinalização – hora trabalhada", "unidade": "h", "categoria": "Equipes e Composições", "subcategoria": "", "custo_direto": 43.78, "bdi": 0.25, "preco_venda": 54.73, "componentes": [{"componente": "Salário encarregado", "tipo": "MO", "qtd": 1.0, "unid": "h", "custo_unit": 24.0, "subtotal": 24.0}, {"componente": "Encargos sociais (72%)", "tipo": "MO", "qtd": 1.0, "unid": "h", "custo_unit": 17.28, "subtotal": 17.28}, {"componente": "EPI + benefícios", "tipo": "MATERIAL", "qtd": 1.0, "unid": "h", "custo_unit": 2.5, "subtotal": 2.5}]}, {"codigo": "ADM-004", "descricao": "Motorista de veículo de apoio – hora trabalhada", "unidade": "h", "categoria": "Equipes e Composições", "subcategoria": "", "custo_direto": 33.62, "bdi": 0.25, "preco_venda": 42.02, "componentes": [{"componente": "Salário motorista", "tipo": "MO", "qtd": 1.0, "unid": "h", "custo_unit": 18.5, "subtotal": 18.5}, {"componente": "Encargos sociais (72%)", "tipo": "MO", "qtd": 1.0, "unid": "h", "custo_unit": 13.32, "subtotal": 13.32}, {"componente": "EPI + adicional de campo", "tipo": "MATERIAL", "qtd": 1.0, "unid": "h", "custo_unit": 1.8, "subtotal": 1.8}]}, {"codigo": "ADM-005", "descricao": "Técnico de segurança do trabalho – hora trabalhada", "unidade": "h", "categoria": "Equipes e Composições", "subcategoria": "", "custo_direto": 53.6, "bdi": 0.25, "preco_venda": 67.0, "componentes": [{"componente": "Salário TST", "tipo": "MO", "qtd": 1.0, "unid": "h", "custo_unit": 30.0, "subtotal": 30.0}, {"componente": "Encargos sociais (72%)", "tipo": "MO", "qtd": 1.0, "unid": "h", "custo_unit": 21.6, "subtotal": 21.6}, {"componente": "Materiais técnicos", "tipo": "MATERIAL", "qtd": 1.0, "unid": "h", "custo_unit": 2.0, "subtotal": 2.0}]}, {"codigo": "ADM-006", "descricao": "Engenheiro responsável técnico – hora trabalhada", "unidade": "h", "categoria": "Equipes e Composições", "subcategoria": "", "custo_direto": 103.1, "bdi": 0.25, "preco_venda": 128.88, "componentes": [{"componente": "Salário topógrafo", "tipo": "MO", "qtd": 1.0, "unid": "h", "custo_unit": 55.0, "subtotal": 55.0}, {"componente": "Encargos sociais (72%)", "tipo": "MO", "qtd": 1.0, "unid": "h", "custo_unit": 39.6, "subtotal": 39.6}, {"componente": "Estação total + GPS (depr.)", "tipo": "EQUIP", "qtd": 1.0, "unid": "h", "custo_unit": 8.5, "subtotal": 8.5}]}, {"codigo": "ADM-007", "descricao": "Equipe de sinalização horizontal – dia", "unidade": "dia", "categoria": "Equipes e Composições", "subcategoria": "", "custo_direto": 3048.0, "bdi": 0.25, "preco_venda": 3810.0, "componentes": [{"componente": "Encarregado – 8h", "tipo": "MO", "qtd": 8.0, "unid": "h", "custo_unit": 52.0, "subtotal": 416.0}, {"componente": "Ajudante 1 – 8h", "tipo": "MO", "qtd": 8.0, "unid": "h", "custo_unit": 28.0, "subtotal": 224.0}, {"componente": "Ajudante 2 – 8h", "tipo": "MO", "qtd": 8.0, "unid": "h", "custo_unit": 28.0, "subtotal": 224.0}, {"componente": "Operador máquina – 8h", "tipo": "MO", "qtd": 8.0, "unid": "h", "custo_unit": 48.0, "subtotal": 384.0}, {"componente": "Veículo pickup 4x4", "tipo": "EQUIP", "qtd": 8.0, "unid": "h", "custo_unit": 145.0, "subtotal": 1160.0}, {"componente": "Máquina de pintura (depr.)", "tipo": "EQUIP", "qtd": 8.0, "unid": "h", "custo_unit": 80.0, "subtotal": 640.0}]}, {"codigo": "ADM-008", "descricao": "Equipe de sinalização vertical – dia", "unidade": "dia", "categoria": "Equipes e Composições", "subcategoria": "", "custo_direto": 2872.0, "bdi": 0.25, "preco_venda": 3590.0, "componentes": [{"componente": "Encarregado – 8h", "tipo": "MO", "qtd": 8.0, "unid": "h", "custo_unit": 52.0, "subtotal": 416.0}, {"componente": "Ajudante 1 – 8h", "tipo": "MO", "qtd": 8.0, "unid": "h", "custo_unit": 28.0, "subtotal": 224.0}, {"componente": "Ajudante 2 – 8h", "tipo": "MO", "qtd": 8.0, "unid": "h", "custo_unit": 28.0, "subtotal": 224.0}, {"componente": "Ajudante 3 – 8h", "tipo": "MO", "qtd": 8.0, "unid": "h", "custo_unit": 28.0, "subtotal": 224.0}, {"componente": "Motorista – 8h", "tipo": "MO", "qtd": 8.0, "unid": "h", "custo_unit": 38.0, "subtotal": 304.0}, {"componente": "Veículo + guindacho (depr.)", "tipo": "EQUIP", "qtd": 8.0, "unid": "h", "custo_unit": 185.0, "subtotal": 1480.0}]}, {"codigo": "ADM-009", "descricao": "Equipe de defensa metálica – dia", "unidade": "dia", "categoria": "Equipes e Composições", "subcategoria": "", "custo_direto": 31696.0, "bdi": 0.25, "preco_venda": 39620.0, "componentes": [{"componente": "Encarregado (176h/mês)", "tipo": "MO", "qtd": 176.0, "unid": "h", "custo_unit": 52.0, "subtotal": 9152.0}, {"componente": "Ajudantes x2 (352h/mês)", "tipo": "MO", "qtd": 352.0, "unid": "h", "custo_unit": 28.0, "subtotal": 9856.0}, {"componente": "Motorista (176h/mês)", "tipo": "MO", "qtd": 176.0, "unid": "h", "custo_unit": 38.0, "subtotal": 6688.0}, {"componente": "Veículo de campo mensal", "tipo": "EQUIP", "qtd": 1.0, "unid": "mês", "custo_unit": 4800.0, "subtotal": 4800.0}, {"componente": "Materiais consumíveis", "tipo": "MATERIAL", "qtd": 1.0, "unid": "mês", "custo_unit": 1200.0, "subtotal": 1200.0}]}, {"codigo": "ADM-010", "descricao": "Caminhão equipado para sinalização – hora", "unidade": "h", "categoria": "Equipes e Composições", "subcategoria": "", "custo_direto": 226.4, "bdi": 0.25, "preco_venda": 283.0, "componentes": [{"componente": "Hora técnica engenheiro sênior", "tipo": "MO", "qtd": 1.0, "unid": "h", "custo_unit": 120.0, "subtotal": 120.0}, {"componente": "Encargos sociais + previdência", "tipo": "MO", "qtd": 1.0, "unid": "h", "custo_unit": 86.4, "subtotal": 86.4}, {"componente": "Taxa ART CREA", "tipo": "MATERIAL", "qtd": 1.0, "unid": "h", "custo_unit": 8.0, "subtotal": 8.0}, {"componente": "Deslocamento + despesas de campo", "tipo": "MATERIAL", "qtd": 1.0, "unid": "h", "custo_unit": 12.0, "subtotal": 12.0}]}, {"codigo": "ADM-011", "descricao": "Veículo de apoio (pickup 4x4) – hora", "unidade": "h", "categoria": "Equipes e Composições", "subcategoria": "", "custo_direto": 2572.0, "bdi": 0.25, "preco_venda": 3215.0, "componentes": [{"componente": "Combustível deslocamento (200km)", "tipo": "MATERIAL", "qtd": 28.0, "unid": "L", "custo_unit": 6.5, "subtotal": 182.0}, {"componente": "Diárias alimentação (2d × 3 func.)", "tipo": "MATERIAL", "qtd": 6.0, "unid": "diária", "custo_unit": 65.0, "subtotal": 390.0}, {"componente": "Horas deslocamento (3 func × 8h)", "tipo": "MO", "qtd": 24.0, "unid": "h", "custo_unit": 35.0, "subtotal": 840.0}, {"componente": "Veículo deslocamento", "tipo": "EQUIP", "qtd": 8.0, "unid": "h", "custo_unit": 145.0, "subtotal": 1160.0}]}, {"codigo": "ADM-012", "descricao": "Equipamentos e ferramentas – por contrato (taxa mensal)", "unidade": "mês", "categoria": "Equipes e Composições", "subcategoria": "", "custo_direto": 2408.0, "bdi": 0.25, "preco_venda": 3010.0, "componentes": [{"componente": "Encarregado – 8h", "tipo": "MO", "qtd": 8.0, "unid": "h", "custo_unit": 52.0, "subtotal": 416.0}, {"componente": "Ajudante 1 – 8h", "tipo": "MO", "qtd": 8.0, "unid": "h", "custo_unit": 28.0, "subtotal": 224.0}, {"componente": "Ajudante 2 – 8h", "tipo": "MO", "qtd": 8.0, "unid": "h", "custo_unit": 28.0, "subtotal": 224.0}, {"componente": "Motorista – 8h", "tipo": "MO", "qtd": 8.0, "unid": "h", "custo_unit": 38.0, "subtotal": 304.0}, {"componente": "Veículo + compressor (depr.)", "tipo": "EQUIP", "qtd": 8.0, "unid": "h", "custo_unit": 155.0, "subtotal": 1240.0}]}, {"codigo": "DM-002", "descricao": "Defensa metálica dupla – fornecimento e implantação", "unidade": "m", "categoria": "Dispositivos de Proteção", "subcategoria": "", "custo_direto": 224.49, "bdi": 0.32, "preco_venda": 296.33, "componentes": [{"componente": "Viga W galvanizada (x2 faces)", "tipo": "MATERIAL", "qtd": 2.1, "unid": "m", "custo_unit": 52.0, "subtotal": 109.2}, {"componente": "Mourão reforçado galvanizado", "tipo": "MATERIAL", "qtd": 0.25, "unid": "und", "custo_unit": 145.0, "subtotal": 36.25}, {"componente": "Espaçadores e conectores", "tipo": "MATERIAL", "qtd": 1.0, "unid": "und", "custo_unit": 38.0, "subtotal": 38.0}, {"componente": "Parafusos + porcas galvanizados", "tipo": "MATERIAL", "qtd": 0.2, "unid": "kg", "custo_unit": 38.0, "subtotal": 7.6}, {"componente": "Encarregado", "tipo": "MO", "qtd": 0.18, "unid": "h", "custo_unit": 52.0, "subtotal": 9.36}, {"componente": "Ajudante (x2)", "tipo": "MO", "qtd": 0.36, "unid": "h", "custo_unit": 28.0, "subtotal": 10.08}, {"componente": "Batedeira de postes", "tipo": "EQUIP", "qtd": 0.05, "unid": "h", "custo_unit": 280.0, "subtotal": 14.0}]}, {"codigo": "DM-003", "descricao": "Terminal absorvedor de energia – fornecimento e implantação", "unidade": "und", "categoria": "Dispositivos de Proteção", "subcategoria": "", "custo_direto": 2881.0, "bdi": 0.3, "preco_venda": 3745.3, "componentes": [{"componente": "Terminal absorvedor de energia", "tipo": "MATERIAL", "qtd": 1.0, "unid": "und", "custo_unit": 2200.0, "subtotal": 2200.0}, {"componente": "Kit parafusos e ancoragens", "tipo": "MATERIAL", "qtd": 1.0, "unid": "CJ", "custo_unit": 280.0, "subtotal": 280.0}, {"componente": "Encarregado", "tipo": "MO", "qtd": 2.0, "unid": "h", "custo_unit": 52.0, "subtotal": 104.0}, {"componente": "Ajudante (x2)", "tipo": "MO", "qtd": 4.0, "unid": "h", "custo_unit": 28.0, "subtotal": 112.0}, {"componente": "Veículo com guindacho", "tipo": "EQUIP", "qtd": 1.0, "unid": "h", "custo_unit": 185.0, "subtotal": 185.0}]}, {"codigo": "DM-004", "descricao": "Atenuador de impacto (crashcushion) – fornecimento e implantação", "unidade": "und", "categoria": "Dispositivos de Proteção", "subcategoria": "", "custo_direto": 9492.0, "bdi": 0.3, "preco_venda": 12339.6, "componentes": [{"componente": "Atenuador de impacto (crashcushion)", "tipo": "MATERIAL", "qtd": 1.0, "unid": "und", "custo_unit": 7500.0, "subtotal": 7500.0}, {"componente": "Base de ancoragem / fixação", "tipo": "MATERIAL", "qtd": 1.0, "unid": "CJ", "custo_unit": 800.0, "subtotal": 800.0}, {"componente": "Encarregado + equipe", "tipo": "MO", "qtd": 4.0, "unid": "h", "custo_unit": 52.0, "subtotal": 208.0}, {"componente": "Ajudante (x2)", "tipo": "MO", "qtd": 8.0, "unid": "h", "custo_unit": 28.0, "subtotal": 224.0}, {"componente": "Guindaste", "tipo": "EQUIP", "qtd": 2.0, "unid": "h", "custo_unit": 380.0, "subtotal": 760.0}]}, {"codigo": "DM-005", "descricao": "Barreira New Jersey em concreto – aluguel mensal", "unidade": "m/mês", "categoria": "Dispositivos de Proteção", "subcategoria": "", "custo_direto": 17.8, "bdi": 0.28, "preco_venda": 22.78, "componentes": [{"componente": "Custo de posse barreira NJ", "tipo": "FIXO", "qtd": 1.0, "unid": "m/mês", "custo_unit": 8.0, "subtotal": 8.0}, {"componente": "Frete ida/volta rateado", "tipo": "FRETE", "qtd": 1.0, "unid": "m", "custo_unit": 5.0, "subtotal": 5.0}, {"componente": "MO posicionamento/retirada", "tipo": "MO", "qtd": 0.1, "unid": "h", "custo_unit": 48.0, "subtotal": 4.8}]}, {"codigo": "DM-006", "descricao": "Barreira New Jersey em plástico (PEHD) – aluguel mensal", "unidade": "m/mês", "categoria": "Dispositivos de Proteção", "subcategoria": "", "custo_direto": 6.56, "bdi": 0.25, "preco_venda": 8.2, "componentes": [{"componente": "Custo de posse barreira plástica", "tipo": "FIXO", "qtd": 1.0, "unid": "und/dia", "custo_unit": 3.5, "subtotal": 3.5}, {"componente": "Frete rateado", "tipo": "FRETE", "qtd": 1.0, "unid": "und", "custo_unit": 2.5, "subtotal": 2.5}, {"componente": "MO posicionamento", "tipo": "MO", "qtd": 0.02, "unid": "h", "custo_unit": 28.0, "subtotal": 0.56}]}, {"codigo": "DM-007", "descricao": "Delineador de defensa metálica – fornecimento e implantação", "unidade": "und", "categoria": "Dispositivos de Proteção", "subcategoria": "", "custo_direto": 119.8, "bdi": 0.28, "preco_venda": 153.34, "componentes": [{"componente": "Viga W galvanizada nova", "tipo": "MATERIAL", "qtd": 1.05, "unid": "m", "custo_unit": 52.0, "subtotal": 54.6}, {"componente": "Parafusos + porcas galvanizados", "tipo": "MATERIAL", "qtd": 0.1, "unid": "kg", "custo_unit": 38.0, "subtotal": 3.8}, {"componente": "Encarregado", "tipo": "MO", "qtd": 0.3, "unid": "h", "custo_unit": 52.0, "subtotal": 15.6}, {"componente": "Ajudante (x2)", "tipo": "MO", "qtd": 0.6, "unid": "h", "custo_unit": 28.0, "subtotal": 16.8}, {"componente": "Veículo de campo", "tipo": "EQUIP", "qtd": 0.2, "unid": "h", "custo_unit": 145.0, "subtotal": 29.0}]}, {"codigo": "DM-008", "descricao": "Reparo de defensa metálica – reposição de vigas e mourões", "unidade": "m", "categoria": "Dispositivos de Proteção", "subcategoria": "", "custo_direto": 205.6, "bdi": 0.3, "preco_venda": 267.28, "componentes": [{"componente": "Barreira NJ pré-moldada concreto", "tipo": "MATERIAL", "qtd": 1.0, "unid": "m", "custo_unit": 145.0, "subtotal": 145.0}, {"componente": "Conectores de travamento", "tipo": "MATERIAL", "qtd": 0.5, "unid": "und", "custo_unit": 28.0, "subtotal": 14.0}, {"componente": "Encarregado", "tipo": "MO", "qtd": 0.15, "unid": "h", "custo_unit": 52.0, "subtotal": 7.8}, {"componente": "Ajudante (x2)", "tipo": "MO", "qtd": 0.3, "unid": "h", "custo_unit": 28.0, "subtotal": 8.4}, {"componente": "Guindaste/retroescavadeira", "tipo": "EQUIP", "qtd": 0.08, "unid": "h", "custo_unit": 380.0, "subtotal": 30.4}]}, {"codigo": "SA-002", "descricao": "Operação Pare e Siga – equipe hora", "unidade": "h", "categoria": "Sinalização de Apoio / Provisória", "subcategoria": "", "custo_direto": 68.0, "bdi": 0.25, "preco_venda": 85.0, "componentes": [{"componente": "EPI especializado", "tipo": "MATERIAL", "qtd": 2.0, "unid": "und", "custo_unit": 2.5, "subtotal": 5.0}, {"componente": "Bandeireiro operador 1 – 1h", "tipo": "MO", "qtd": 1.0, "unid": "h", "custo_unit": 28.0, "subtotal": 28.0}, {"componente": "Bandeireiro operador 2 – 1h", "tipo": "MO", "qtd": 1.0, "unid": "h", "custo_unit": 28.0, "subtotal": 28.0}, {"componente": "Rádio comunicador (depr.)", "tipo": "EQUIP", "qtd": 2.0, "unid": "h", "custo_unit": 2.0, "subtotal": 4.0}, {"componente": "Placas Pare/Siga (depr.)", "tipo": "EQUIP", "qtd": 1.0, "unid": "h", "custo_unit": 3.0, "subtotal": 3.0}]}, {"codigo": "SA-003", "descricao": "Fechamento de faixa – equipe hora", "unidade": "h", "categoria": "Sinalização de Apoio / Provisória", "subcategoria": "", "custo_direto": 260.0, "bdi": 0.28, "preco_venda": 332.8, "componentes": [{"componente": "Cones de sinalização (depr. hora)", "tipo": "MATERIAL", "qtd": 20.0, "unid": "und/h", "custo_unit": 0.15, "subtotal": 3.0}, {"componente": "Delineadores retrorefletivos", "tipo": "MATERIAL", "qtd": 8.0, "unid": "und/h", "custo_unit": 0.5, "subtotal": 4.0}, {"componente": "Encarregado", "tipo": "MO", "qtd": 1.0, "unid": "h", "custo_unit": 52.0, "subtotal": 52.0}, {"componente": "Ajudante (x2)", "tipo": "MO", "qtd": 2.0, "unid": "h", "custo_unit": 28.0, "subtotal": 56.0}, {"componente": "Veículo de apoio", "tipo": "EQUIP", "qtd": 1.0, "unid": "h", "custo_unit": 145.0, "subtotal": 145.0}]}, {"codigo": "SA-004", "descricao": "Canalização com cones – set hora", "unidade": "h", "categoria": "Sinalização de Apoio / Provisória", "subcategoria": "", "custo_direto": 105.0, "bdi": 0.25, "preco_venda": 131.25, "componentes": [{"componente": "Cones – set 30 (depr. hora)", "tipo": "MATERIAL", "qtd": 30.0, "unid": "und/h", "custo_unit": 0.15, "subtotal": 4.5}, {"componente": "Ajudante de campo", "tipo": "MO", "qtd": 1.0, "unid": "h", "custo_unit": 28.0, "subtotal": 28.0}, {"componente": "Veículo de apoio", "tipo": "EQUIP", "qtd": 0.5, "unid": "h", "custo_unit": 145.0, "subtotal": 72.5}]}, {"codigo": "SA-005", "descricao": "Caminhão de apoio (pickup ou leve) – hora", "unidade": "h", "categoria": "Sinalização de Apoio / Provisória", "subcategoria": "", "custo_direto": 138.2, "bdi": 0.28, "preco_venda": 176.9, "componentes": [{"componente": "Combustível veículo", "tipo": "MATERIAL", "qtd": 0.8, "unid": "L", "custo_unit": 6.5, "subtotal": 5.2}, {"componente": "Motorista de campo", "tipo": "MO", "qtd": 1.0, "unid": "h", "custo_unit": 38.0, "subtotal": 38.0}, {"componente": "Pickup 4x4 (depr. + manutenção)", "tipo": "EQUIP", "qtd": 1.0, "unid": "h", "custo_unit": 95.0, "subtotal": 95.0}]}, {"codigo": "SA-006", "descricao": "Caminhão seta (TMA) – hora operacional", "unidade": "h", "categoria": "Sinalização de Apoio / Provisória", "subcategoria": "", "custo_direto": 2046.0, "bdi": 0.3, "preco_venda": 2659.8, "componentes": [{"componente": "Combustível caminhão seta (diária)", "tipo": "MATERIAL", "qtd": 12.0, "unid": "L", "custo_unit": 6.5, "subtotal": 78.0}, {"componente": "Motorista", "tipo": "MO", "qtd": 8.0, "unid": "h", "custo_unit": 38.0, "subtotal": 304.0}, {"componente": "Operador de sinalização", "tipo": "MO", "qtd": 8.0, "unid": "h", "custo_unit": 28.0, "subtotal": 224.0}, {"componente": "Caminhão seta com TMA", "tipo": "EQUIP", "qtd": 8.0, "unid": "h", "custo_unit": 180.0, "subtotal": 1440.0}]}, {"codigo": "SA-007", "descricao": "Mobilização – por contrato", "unidade": "vb", "categoria": "Sinalização de Apoio / Provisória", "subcategoria": "", "custo_direto": 3.0, "bdi": 0.25, "preco_venda": 3.75, "componentes": [{"componente": "Cone polietileno (depr. diária)", "tipo": "MATERIAL", "qtd": 1.0, "unid": "und/dia", "custo_unit": 2.2, "subtotal": 2.2}, {"componente": "Frete pró-rata", "tipo": "FRETE", "qtd": 1.0, "unid": "und/dia", "custo_unit": 0.8, "subtotal": 0.8}]}, {"codigo": "SA-008", "descricao": "Desmobilização – por contrato", "unidade": "vb", "categoria": "Sinalização de Apoio / Provisória", "subcategoria": "", "custo_direto": 189.9, "bdi": 0.28, "preco_venda": 243.07, "componentes": [{"componente": "Combustível veículo escolta", "tipo": "MATERIAL", "qtd": 0.6, "unid": "L", "custo_unit": 6.5, "subtotal": 3.9}, {"componente": "Operador técnico de escolta", "tipo": "MO", "qtd": 1.0, "unid": "h", "custo_unit": 48.0, "subtotal": 48.0}, {"componente": "Veículo de escolta", "tipo": "EQUIP", "qtd": 1.0, "unid": "h", "custo_unit": 120.0, "subtotal": 120.0}, {"componente": "Equipamentos de sinalização escolta", "tipo": "EQUIP", "qtd": 1.0, "unid": "h", "custo_unit": 18.0, "subtotal": 18.0}]}, {"codigo": "SA-009", "descricao": "Elaboração de RDO, evidências e medição", "unidade": "mês", "categoria": "Sinalização de Apoio / Provisória", "subcategoria": "", "custo_direto": 615.0, "bdi": 0.25, "preco_venda": 768.75, "componentes": [{"componente": "Combustível gerador (8h)", "tipo": "MATERIAL", "qtd": 6.0, "unid": "L", "custo_unit": 6.5, "subtotal": 39.0}, {"componente": "Operador/vigilante", "tipo": "MO", "qtd": 2.0, "unid": "h", "custo_unit": 28.0, "subtotal": 56.0}, {"componente": "Gerador 15kVA (depr. + manutenção)", "tipo": "EQUIP", "qtd": 8.0, "unid": "h", "custo_unit": 65.0, "subtotal": 520.0}]}, {"codigo": "SH-002", "descricao": "Pintura mecânica de contraste em pavimento rígido", "unidade": "m²", "categoria": "Sinalização Horizontal", "subcategoria": "", "custo_direto": 6.72, "bdi": 0.28, "preco_venda": 8.6, "componentes": [{"componente": "Tinta acrílica (pavimento rígido)", "tipo": "MATERIAL", "qtd": 0.38, "unid": "kg", "custo_unit": 14.5, "subtotal": 5.51}, {"componente": "Microesferas de vidro Tipo I", "tipo": "MATERIAL", "qtd": 0.08, "unid": "kg", "custo_unit": 4.5, "subtotal": 0.36}, {"componente": "Operador de máquina", "tipo": "MO", "qtd": 0.003, "unid": "h", "custo_unit": 48.0, "subtotal": 0.14}, {"componente": "Ajudante (limpeza + soprador)", "tipo": "MO", "qtd": 0.004, "unid": "h", "custo_unit": 28.0, "subtotal": 0.11}, {"componente": "Máquina de pintura mecanizada", "tipo": "EQUIP", "qtd": 0.003, "unid": "h", "custo_unit": 180.0, "subtotal": 0.54}, {"componente": "Soprador industrial", "tipo": "EQUIP", "qtd": 0.002, "unid": "h", "custo_unit": 25.0, "subtotal": 0.05}]}, {"codigo": "SH-003", "descricao": "Pintura manual c/ tinta acrílica emulsionada em água", "unidade": "m²", "categoria": "Sinalização Horizontal", "subcategoria": "", "custo_direto": 7.34, "bdi": 0.25, "preco_venda": 9.18, "componentes": [{"componente": "Tinta acrílica à base d'água", "tipo": "MATERIAL", "qtd": 0.4, "unid": "kg", "custo_unit": 14.5, "subtotal": 5.8}, {"componente": "Microesferas de vidro Tipo I", "tipo": "MATERIAL", "qtd": 0.08, "unid": "kg", "custo_unit": 4.5, "subtotal": 0.36}, {"componente": "Pintor de sinalização (manual)", "tipo": "MO", "qtd": 0.025, "unid": "h", "custo_unit": 28.0, "subtotal": 0.7}, {"componente": "Ajudante", "tipo": "MO", "qtd": 0.01, "unid": "h", "custo_unit": 28.0, "subtotal": 0.28}, {"componente": "Equipamentos manuais (rolo, molde, régua)", "tipo": "EQUIP", "qtd": 0.01, "unid": "h", "custo_unit": 20.0, "subtotal": 0.2}]}, {"codigo": "SH-004", "descricao": "Termoplástico extrudado – aplicação manual", "unidade": "m²", "categoria": "Sinalização Horizontal", "subcategoria": "", "custo_direto": 55.3, "bdi": 0.3, "preco_venda": 71.89, "componentes": [{"componente": "Material termoplástico extrudado", "tipo": "MATERIAL", "qtd": 3.5, "unid": "kg", "custo_unit": 12.0, "subtotal": 42.0}, {"componente": "Microesferas de vidro pré-misturadas", "tipo": "MATERIAL", "qtd": 0.6, "unid": "kg", "custo_unit": 4.5, "subtotal": 2.7}, {"componente": "Primer de ancoragem (epóxi)", "tipo": "MATERIAL", "qtd": 0.1, "unid": "L", "custo_unit": 8.0, "subtotal": 0.8}, {"componente": "Operador de extrusora", "tipo": "MO", "qtd": 0.05, "unid": "h", "custo_unit": 48.0, "subtotal": 2.4}, {"componente": "Ajudante", "tipo": "MO", "qtd": 0.05, "unid": "h", "custo_unit": 28.0, "subtotal": 1.4}, {"componente": "Extrusora termoplástica", "tipo": "EQUIP", "qtd": 0.05, "unid": "h", "custo_unit": 120.0, "subtotal": 6.0}]}, {"codigo": "SH-005", "descricao": "Termoplástico por aspersão (spray)", "unidade": "m²", "categoria": "Sinalização Horizontal", "subcategoria": "", "custo_direto": 44.93, "bdi": 0.3, "preco_venda": 58.41, "componentes": [{"componente": "Material termoplástico aspersão", "tipo": "MATERIAL", "qtd": 2.8, "unid": "kg", "custo_unit": 12.0, "subtotal": 33.6}, {"componente": "Microesferas de vidro drop-on", "tipo": "MATERIAL", "qtd": 0.5, "unid": "kg", "custo_unit": 4.5, "subtotal": 2.25}, {"componente": "Primer de ancoragem", "tipo": "MATERIAL", "qtd": 0.1, "unid": "L", "custo_unit": 8.0, "subtotal": 0.8}, {"componente": "Operador de aspersora", "tipo": "MO", "qtd": 0.03, "unid": "h", "custo_unit": 48.0, "subtotal": 1.44}, {"componente": "Ajudante", "tipo": "MO", "qtd": 0.03, "unid": "h", "custo_unit": 28.0, "subtotal": 0.84}, {"componente": "Aspersora termoplástica", "tipo": "EQUIP", "qtd": 0.03, "unid": "h", "custo_unit": 200.0, "subtotal": 6.0}]}, {"codigo": "SH-006", "descricao": "Pintura manual em plástico a frio (MMA)", "unidade": "m²", "categoria": "Sinalização Horizontal", "subcategoria": "", "custo_direto": 91.19, "bdi": 0.3, "preco_venda": 118.55, "componentes": [{"componente": "Tinta plástica a frio MMA (2 compon.)", "tipo": "MATERIAL", "qtd": 2.5, "unid": "kg", "custo_unit": 32.0, "subtotal": 80.0}, {"componente": "Microesferas de vidro drop-on", "tipo": "MATERIAL", "qtd": 0.5, "unid": "kg", "custo_unit": 4.5, "subtotal": 2.25}, {"componente": "Catalisador/endurecedor", "tipo": "MATERIAL", "qtd": 0.25, "unid": "kg", "custo_unit": 18.0, "subtotal": 4.5}, {"componente": "Aplicador de screed (manual)", "tipo": "MO", "qtd": 0.04, "unid": "h", "custo_unit": 48.0, "subtotal": 1.92}, {"componente": "Ajudante", "tipo": "MO", "qtd": 0.04, "unid": "h", "custo_unit": 28.0, "subtotal": 1.12}, {"componente": "Equipamento de screed manual", "tipo": "EQUIP", "qtd": 0.04, "unid": "h", "custo_unit": 35.0, "subtotal": 1.4}]}, {"codigo": "SH-007", "descricao": "Apagamento de sinalização por microfresagem", "unidade": "m²", "categoria": "Sinalização Horizontal", "subcategoria": "", "custo_direto": 83.73, "bdi": 0.28, "preco_venda": 107.17, "componentes": [{"componente": "Tinta plástica a frio MMA (2 compon.)", "tipo": "MATERIAL", "qtd": 2.2, "unid": "kg", "custo_unit": 32.0, "subtotal": 70.4}, {"componente": "Microesferas de vidro drop-on", "tipo": "MATERIAL", "qtd": 0.5, "unid": "kg", "custo_unit": 4.5, "subtotal": 2.25}, {"componente": "Catalisador/endurecedor", "tipo": "MATERIAL", "qtd": 0.22, "unid": "kg", "custo_unit": 18.0, "subtotal": 3.96}, {"componente": "Operador de screed mecanizado", "tipo": "MO", "qtd": 0.02, "unid": "h", "custo_unit": 48.0, "subtotal": 0.96}, {"componente": "Ajudante", "tipo": "MO", "qtd": 0.02, "unid": "h", "custo_unit": 28.0, "subtotal": 0.56}, {"componente": "Screed autopropelido", "tipo": "EQUIP", "qtd": 0.02, "unid": "h", "custo_unit": 280.0, "subtotal": 5.6}]}, {"codigo": "SH-008", "descricao": "Remoção de tachas – unitária", "unidade": "und", "categoria": "Sinalização Horizontal", "subcategoria": "", "custo_direto": 5.93, "bdi": 0.25, "preco_venda": 7.41, "componentes": [{"componente": "Água (consumo do equipamento)", "tipo": "MATERIAL", "qtd": 0.002, "unid": "m³", "custo_unit": 18.0, "subtotal": 0.04}, {"componente": "Operador de hidrojato", "tipo": "MO", "qtd": 0.015, "unid": "h", "custo_unit": 48.0, "subtotal": 0.72}, {"componente": "Ajudante", "tipo": "MO", "qtd": 0.015, "unid": "h", "custo_unit": 28.0, "subtotal": 0.42}, {"componente": "Hidrojato alta pressão (3.000+ PSI)", "tipo": "EQUIP", "qtd": 0.015, "unid": "h", "custo_unit": 220.0, "subtotal": 3.3}, {"componente": "Caminhão de apoio", "tipo": "EQUIP", "qtd": 0.01, "unid": "h", "custo_unit": 145.0, "subtotal": 1.45}]}, {"codigo": "SH-009", "descricao": "Remoção de tachões – unitária", "unidade": "und", "categoria": "Sinalização Horizontal", "subcategoria": "", "custo_direto": 7.32, "bdi": 0.28, "preco_venda": 9.37, "componentes": [{"componente": "Combustível fresadora (pró-rata)", "tipo": "MATERIAL", "qtd": 0.005, "unid": "L", "custo_unit": 6.5, "subtotal": 0.03}, {"componente": "Operador de microfresadora", "tipo": "MO", "qtd": 0.008, "unid": "h", "custo_unit": 58.0, "subtotal": 0.46}, {"componente": "Ajudante (varredura + coleta)", "tipo": "MO", "qtd": 0.01, "unid": "h", "custo_unit": 28.0, "subtotal": 0.28}, {"componente": "Microfresadora de pavimento", "tipo": "EQUIP", "qtd": 0.008, "unid": "h", "custo_unit": 750.0, "subtotal": 6.0}, {"componente": "Caminhão caçamba (remoção)", "tipo": "EQUIP", "qtd": 0.003, "unid": "h", "custo_unit": 180.0, "subtotal": 0.54}]}, {"codigo": "SH-010", "descricao": "Tacha retrorefletiva bidirecional tipo II corpo B – fornecimento e implantação", "unidade": "und", "categoria": "Sinalização Horizontal", "subcategoria": "", "custo_direto": 13.68, "bdi": 0.28, "preco_venda": 17.51, "componentes": [{"componente": "Tacha retrorefletiva mono Tipo II", "tipo": "MATERIAL", "qtd": 1.0, "unid": "und", "custo_unit": 12.5, "subtotal": 12.5}, {"componente": "Cola epóxi bicomponente", "tipo": "MATERIAL", "qtd": 0.015, "unid": "kg", "custo_unit": 48.0, "subtotal": 0.72}, {"componente": "Ajudante de implantação", "tipo": "MO", "qtd": 0.012, "unid": "h", "custo_unit": 28.0, "subtotal": 0.34}, {"componente": "Furadeira de percussão", "tipo": "EQUIP", "qtd": 0.005, "unid": "h", "custo_unit": 25.0, "subtotal": 0.12}]}, {"codigo": "SH-011", "descricao": "Tacha retrorefletiva monodirecional tipo II corpo B – fornecimento e implantação", "unidade": "und", "categoria": "Sinalização Horizontal", "subcategoria": "", "custo_direto": 17.98, "bdi": 0.28, "preco_venda": 23.01, "componentes": [{"componente": "Tacha retrorefletiva bidirecional Tipo II", "tipo": "MATERIAL", "qtd": 1.0, "unid": "und", "custo_unit": 16.8, "subtotal": 16.8}, {"componente": "Cola epóxi bicomponente", "tipo": "MATERIAL", "qtd": 0.015, "unid": "kg", "custo_unit": 48.0, "subtotal": 0.72}, {"componente": "Ajudante de implantação", "tipo": "MO", "qtd": 0.012, "unid": "h", "custo_unit": 28.0, "subtotal": 0.34}, {"componente": "Furadeira de percussão", "tipo": "EQUIP", "qtd": 0.005, "unid": "h", "custo_unit": 25.0, "subtotal": 0.12}]}, {"codigo": "SH-012", "descricao": "Tachão retrorefletivo bidirecional tipo I corpo B – fornecimento e implantação", "unidade": "und", "categoria": "Sinalização Horizontal", "subcategoria": "", "custo_direto": 29.91, "bdi": 0.28, "preco_venda": 38.28, "componentes": [{"componente": "Tachão de borracha vulcanizada", "tipo": "MATERIAL", "qtd": 1.0, "unid": "und", "custo_unit": 28.0, "subtotal": 28.0}, {"componente": "Parafusos de fixação + bucha", "tipo": "MATERIAL", "qtd": 0.05, "unid": "kg", "custo_unit": 22.0, "subtotal": 1.1}, {"componente": "Ajudante de implantação", "tipo": "MO", "qtd": 0.02, "unid": "h", "custo_unit": 28.0, "subtotal": 0.56}, {"componente": "Furadeira de percussão", "tipo": "EQUIP", "qtd": 0.01, "unid": "h", "custo_unit": 25.0, "subtotal": 0.25}]}, {"codigo": "SH-013", "descricao": "Tachão retrorefletivo monodirecional tipo I corpo B – fornecimento e implantação", "unidade": "und", "categoria": "Sinalização Horizontal", "subcategoria": "", "custo_direto": 50.71, "bdi": 0.28, "preco_venda": 64.91, "componentes": [{"componente": "Delineador em polietileno flexível", "tipo": "MATERIAL", "qtd": 1.0, "unid": "und", "custo_unit": 48.0, "subtotal": 48.0}, {"componente": "Parafusos de fixação + base", "tipo": "MATERIAL", "qtd": 0.08, "unid": "kg", "custo_unit": 22.0, "subtotal": 1.76}, {"componente": "Ajudante de implantação", "tipo": "MO", "qtd": 0.025, "unid": "h", "custo_unit": 28.0, "subtotal": 0.7}, {"componente": "Furadeira + acessórios", "tipo": "EQUIP", "qtd": 0.01, "unid": "h", "custo_unit": 25.0, "subtotal": 0.25}]}, {"codigo": "SH-014", "descricao": "Balizador de alta performance (World Center) – fornecimento e implantação", "unidade": "und", "categoria": "Sinalização Horizontal", "subcategoria": "", "custo_direto": 228.3, "bdi": 0.28, "preco_venda": 292.22, "componentes": [{"componente": "Marco quilométrico pré-moldado", "tipo": "MATERIAL", "qtd": 1.0, "unid": "und", "custo_unit": 180.0, "subtotal": 180.0}, {"componente": "Concreto para base (fck 20 MPa)", "tipo": "MATERIAL", "qtd": 0.03, "unid": "m³", "custo_unit": 380.0, "subtotal": 11.4}, {"componente": "Encarregado de implantação", "tipo": "MO", "qtd": 0.3, "unid": "h", "custo_unit": 52.0, "subtotal": 15.6}, {"componente": "Ajudante (x2)", "tipo": "MO", "qtd": 0.6, "unid": "h", "custo_unit": 28.0, "subtotal": 16.8}, {"componente": "Compactador de solo", "tipo": "EQUIP", "qtd": 0.1, "unid": "h", "custo_unit": 45.0, "subtotal": 4.5}]}, {"codigo": "SH-016", "descricao": "Faixa de pedestres – pintura mecânica", "unidade": "m²", "categoria": "Sinalização Horizontal", "subcategoria": "", "custo_direto": 30.07, "bdi": 0.28, "preco_venda": 38.49, "componentes": [{"componente": "Tinta acrílica à base d'água", "tipo": "MATERIAL", "qtd": 1.5, "unid": "kg", "custo_unit": 14.5, "subtotal": 21.75}, {"componente": "Microesferas de vidro Tipo I", "tipo": "MATERIAL", "qtd": 0.25, "unid": "kg", "custo_unit": 4.5, "subtotal": 1.12}, {"componente": "Molde de seta (aluguel pró-rata)", "tipo": "MATERIAL", "qtd": 0.05, "unid": "h", "custo_unit": 8.0, "subtotal": 0.4}, {"componente": "Operador de máquina de pintura", "tipo": "MO", "qtd": 0.04, "unid": "h", "custo_unit": 48.0, "subtotal": 1.92}, {"componente": "Ajudante (posicionamento de molde)", "tipo": "MO", "qtd": 0.06, "unid": "h", "custo_unit": 28.0, "subtotal": 1.68}, {"componente": "Máquina de pintura manual", "tipo": "EQUIP", "qtd": 0.04, "unid": "h", "custo_unit": 80.0, "subtotal": 3.2}]}, {"codigo": "SH-017", "descricao": "Seta de canalização – termoplástico extrudado", "unidade": "und", "categoria": "Sinalização Horizontal", "subcategoria": "", "custo_direto": 50.7, "bdi": 0.28, "preco_venda": 64.9, "componentes": [{"componente": "Material termoplástico extrudado", "tipo": "MATERIAL", "qtd": 3.5, "unid": "kg", "custo_unit": 12.0, "subtotal": 42.0}, {"componente": "Microesferas de vidro", "tipo": "MATERIAL", "qtd": 0.8, "unid": "kg", "custo_unit": 4.5, "subtotal": 3.6}, {"componente": "Primer de ancoragem", "tipo": "MATERIAL", "qtd": 0.15, "unid": "L", "custo_unit": 8.0, "subtotal": 1.2}, {"componente": "Mão de obra aplicação", "tipo": "MO", "qtd": 0.05, "unid": "h", "custo_unit": 48.0, "subtotal": 2.4}, {"componente": "Aluguel molde metálico", "tipo": "EQUIP", "qtd": 0.1, "unid": "h", "custo_unit": 15.0, "subtotal": 1.5}]}, {"codigo": "SH-018", "descricao": "Pintura manual – tinta a base de solvente – BRANCA", "unidade": "m²", "categoria": "Sinalização Horizontal", "subcategoria": "Pintura Fria – Base Solvente", "custo_direto": 10.96, "bdi": 0.28, "preco_venda": 14.03, "componentes": [{"componente": "Tinta a base de solvente (0,35 kg/m²)", "tipo": "MATERIAL", "qtd": 0.35, "unid": "kg", "custo_unit": 24.15, "subtotal": 8.45}, {"componente": "Microesferas de vidro Tipo I (drop-on)", "tipo": "MATERIAL", "qtd": 0.08, "unid": "kg", "custo_unit": 4.5, "subtotal": 0.36}, {"componente": "Pintor sinalização manual", "tipo": "MO", "qtd": 0.025, "unid": "h", "custo_unit": 28.0, "subtotal": 0.7}, {"componente": "Ajudante (marcação + molde)", "tipo": "MO", "qtd": 0.015, "unid": "h", "custo_unit": 28.0, "subtotal": 0.42}, {"componente": "Equipamento manual (rolo/régua)", "tipo": "EQUIP", "qtd": 0.015, "unid": "h", "custo_unit": 20.0, "subtotal": 0.3}, {"componente": "Veículo de apoio", "tipo": "EQUIP", "qtd": 0.005, "unid": "h", "custo_unit": 145.0, "subtotal": 0.72}]}, {"codigo": "SH-019", "descricao": "Pintura manual – tinta a base de solvente – AMARELA", "unidade": "m²", "categoria": "Sinalização Horizontal", "subcategoria": "Pintura Fria – Base Solvente", "custo_direto": 10.96, "bdi": 0.28, "preco_venda": 14.03, "componentes": [{"componente": "Tinta a base de solvente (0,35 kg/m²)", "tipo": "MATERIAL", "qtd": 0.35, "unid": "kg", "custo_unit": 24.15, "subtotal": 8.45}, {"componente": "Microesferas de vidro Tipo I (drop-on)", "tipo": "MATERIAL", "qtd": 0.08, "unid": "kg", "custo_unit": 4.5, "subtotal": 0.36}, {"componente": "Pintor sinalização manual", "tipo": "MO", "qtd": 0.025, "unid": "h", "custo_unit": 28.0, "subtotal": 0.7}, {"componente": "Ajudante (marcação + molde)", "tipo": "MO", "qtd": 0.015, "unid": "h", "custo_unit": 28.0, "subtotal": 0.42}, {"componente": "Equipamento manual (rolo/régua)", "tipo": "EQUIP", "qtd": 0.015, "unid": "h", "custo_unit": 20.0, "subtotal": 0.3}, {"componente": "Veículo de apoio", "tipo": "EQUIP", "qtd": 0.005, "unid": "h", "custo_unit": 145.0, "subtotal": 0.72}]}, {"codigo": "SH-020", "descricao": "Pintura mecânica – tinta a base de solvente – BRANCA", "unidade": "m²", "categoria": "Sinalização Horizontal", "subcategoria": "Pintura Fria – Base Solvente", "custo_direto": 7.49, "bdi": 0.28, "preco_venda": 9.59, "componentes": [{"componente": "Tinta a base de solvente (0,25 kg/m²)", "tipo": "MATERIAL", "qtd": 0.25, "unid": "kg", "custo_unit": 24.15, "subtotal": 6.04}, {"componente": "Microesferas de vidro Tipo I (drop-on)", "tipo": "MATERIAL", "qtd": 0.06, "unid": "kg", "custo_unit": 4.5, "subtotal": 0.27}, {"componente": "Operador de máquina autopropelida", "tipo": "MO", "qtd": 0.003, "unid": "h", "custo_unit": 48.0, "subtotal": 0.14}, {"componente": "Ajudante de campo", "tipo": "MO", "qtd": 0.003, "unid": "h", "custo_unit": 28.0, "subtotal": 0.08}, {"componente": "Máquina de pintura autopropelida", "tipo": "EQUIP", "qtd": 0.003, "unid": "h", "custo_unit": 180.0, "subtotal": 0.54}, {"componente": "Veículo de apoio", "tipo": "EQUIP", "qtd": 0.002, "unid": "h", "custo_unit": 145.0, "subtotal": 0.29}, {"componente": "Solvente de limpeza (pro-rata)", "tipo": "MATERIAL", "qtd": 0.005, "unid": "L", "custo_unit": 25.0, "subtotal": 0.12}]}, {"codigo": "SH-021", "descricao": "Pintura mecânica – tinta a base de solvente – AMARELA", "unidade": "m²", "categoria": "Sinalização Horizontal", "subcategoria": "Pintura Fria – Base Solvente", "custo_direto": 7.49, "bdi": 0.28, "preco_venda": 9.59, "componentes": [{"componente": "Tinta a base de solvente (0,25 kg/m²)", "tipo": "MATERIAL", "qtd": 0.25, "unid": "kg", "custo_unit": 24.15, "subtotal": 6.04}, {"componente": "Microesferas de vidro Tipo I (drop-on)", "tipo": "MATERIAL", "qtd": 0.06, "unid": "kg", "custo_unit": 4.5, "subtotal": 0.27}, {"componente": "Operador de máquina autopropelida", "tipo": "MO", "qtd": 0.003, "unid": "h", "custo_unit": 48.0, "subtotal": 0.14}, {"componente": "Ajudante de campo", "tipo": "MO", "qtd": 0.003, "unid": "h", "custo_unit": 28.0, "subtotal": 0.08}, {"componente": "Máquina de pintura autopropelida", "tipo": "EQUIP", "qtd": 0.003, "unid": "h", "custo_unit": 180.0, "subtotal": 0.54}, {"componente": "Veículo de apoio", "tipo": "EQUIP", "qtd": 0.002, "unid": "h", "custo_unit": 145.0, "subtotal": 0.29}, {"componente": "Solvente de limpeza (pro-rata)", "tipo": "MATERIAL", "qtd": 0.005, "unid": "L", "custo_unit": 25.0, "subtotal": 0.12}]}, {"codigo": "SH-022", "descricao": "Pintura manual – Metil Metacrilato (MMA) bicomponente – BRANCA", "unidade": "m²", "categoria": "Sinalização Horizontal", "subcategoria": "Metilmetacrilato (MMA)", "custo_direto": 75.15, "bdi": 0.3, "preco_venda": 97.7, "componentes": [{"componente": "Tinta MMA bicomponente Parte A", "tipo": "MATERIAL", "qtd": 1.8, "unid": "kg", "custo_unit": 32.0, "subtotal": 57.6}, {"componente": "Tinta MMA bicomponente Parte B (endurecedor)", "tipo": "MATERIAL", "qtd": 0.45, "unid": "kg", "custo_unit": 18.5, "subtotal": 8.32}, {"componente": "Microesferas de vidro drop-on", "tipo": "MATERIAL", "qtd": 0.5, "unid": "kg", "custo_unit": 4.5, "subtotal": 2.25}, {"componente": "Primer epóxi de ancoragem", "tipo": "MATERIAL", "qtd": 0.06, "unid": "L", "custo_unit": 12.0, "subtotal": 0.72}, {"componente": "Aplicador de screed manual", "tipo": "MO", "qtd": 0.04, "unid": "h", "custo_unit": 48.0, "subtotal": 1.92}, {"componente": "Ajudante (catalisação + aplicação)", "tipo": "MO", "qtd": 0.06, "unid": "h", "custo_unit": 28.0, "subtotal": 1.68}, {"componente": "Rodo/espátula de aplicação MMA", "tipo": "EQUIP", "qtd": 0.04, "unid": "h", "custo_unit": 30.0, "subtotal": 1.2}, {"componente": "Veículo de apoio", "tipo": "EQUIP", "qtd": 0.01, "unid": "h", "custo_unit": 145.0, "subtotal": 1.45}]}, {"codigo": "SH-023", "descricao": "Pintura mecânica – Metil Metacrilato (MMA) bicomponente – BRANCA", "unidade": "m²", "categoria": "Sinalização Horizontal", "subcategoria": "Metilmetacrilato (MMA)", "custo_direto": 66.64, "bdi": 0.3, "preco_venda": 86.63, "componentes": [{"componente": "Tinta MMA bicomponente Parte A", "tipo": "MATERIAL", "qtd": 1.5, "unid": "kg", "custo_unit": 32.0, "subtotal": 48.0}, {"componente": "Tinta MMA bicomponente Parte B (endurecedor)", "tipo": "MATERIAL", "qtd": 0.38, "unid": "kg", "custo_unit": 18.5, "subtotal": 7.03}, {"componente": "Microesferas de vidro drop-on", "tipo": "MATERIAL", "qtd": 0.5, "unid": "kg", "custo_unit": 4.5, "subtotal": 2.25}, {"componente": "Primer epóxi de ancoragem", "tipo": "MATERIAL", "qtd": 0.06, "unid": "L", "custo_unit": 12.0, "subtotal": 0.72}, {"componente": "Operador screed mecanizado", "tipo": "MO", "qtd": 0.02, "unid": "h", "custo_unit": 48.0, "subtotal": 0.96}, {"componente": "Ajudante", "tipo": "MO", "qtd": 0.02, "unid": "h", "custo_unit": 28.0, "subtotal": 0.56}, {"componente": "Screed/extrusora MMA autopropelido", "tipo": "EQUIP", "qtd": 0.02, "unid": "h", "custo_unit": 320.0, "subtotal": 6.4}, {"componente": "Veículo de apoio", "tipo": "EQUIP", "qtd": 0.005, "unid": "h", "custo_unit": 145.0, "subtotal": 0.72}]}, {"codigo": "SV-002", "descricao": "Placa em aço galvanizado #18 – película Tipo I – fornecimento e implantação", "unidade": "m²", "categoria": "Sinalização Vertical", "subcategoria": "", "custo_direto": 469.3, "bdi": 0.3, "preco_venda": 610.09, "componentes": [{"componente": "Chapa de aço galvanizado #18", "tipo": "MATERIAL", "qtd": 1.05, "unid": "m²", "custo_unit": 95.0, "subtotal": 99.75}, {"componente": "Película retrorefletiva Tipo I", "tipo": "MATERIAL", "qtd": 1.05, "unid": "m²", "custo_unit": 185.0, "subtotal": 194.25}, {"componente": "Perfil enrijecedor", "tipo": "MATERIAL", "qtd": 1.2, "unid": "m", "custo_unit": 18.0, "subtotal": 21.6}, {"componente": "Impressão serigráfica/vinil", "tipo": "MATERIAL", "qtd": 1.0, "unid": "m²", "custo_unit": 55.0, "subtotal": 55.0}, {"componente": "Encarregado", "tipo": "MO", "qtd": 0.4, "unid": "h", "custo_unit": 52.0, "subtotal": 20.8}, {"componente": "Ajudante (x2)", "tipo": "MO", "qtd": 0.8, "unid": "h", "custo_unit": 28.0, "subtotal": 22.4}, {"componente": "Veículo com guindacho", "tipo": "EQUIP", "qtd": 0.3, "unid": "h", "custo_unit": 185.0, "subtotal": 55.5}]}, {"codigo": "SV-003", "descricao": "Placa em aço galvanizado #18 – película Tipo III – fornecimento e implantação", "unidade": "m²", "categoria": "Sinalização Vertical", "subcategoria": "", "custo_direto": 579.05, "bdi": 0.3, "preco_venda": 752.76, "componentes": [{"componente": "Chapa de aço galvanizado #18", "tipo": "MATERIAL", "qtd": 1.05, "unid": "m²", "custo_unit": 95.0, "subtotal": 99.75}, {"componente": "Película retrorefletiva Tipo III", "tipo": "MATERIAL", "qtd": 1.05, "unid": "m²", "custo_unit": 280.0, "subtotal": 294.0}, {"componente": "Perfil enrijecedor", "tipo": "MATERIAL", "qtd": 1.2, "unid": "m", "custo_unit": 18.0, "subtotal": 21.6}, {"componente": "Impressão serigráfica/vinil", "tipo": "MATERIAL", "qtd": 1.0, "unid": "m²", "custo_unit": 65.0, "subtotal": 65.0}, {"componente": "Encarregado", "tipo": "MO", "qtd": 0.4, "unid": "h", "custo_unit": 52.0, "subtotal": 20.8}, {"componente": "Ajudante (x2)", "tipo": "MO", "qtd": 0.8, "unid": "h", "custo_unit": 28.0, "subtotal": 22.4}, {"componente": "Veículo com guindacho", "tipo": "EQUIP", "qtd": 0.3, "unid": "h", "custo_unit": 185.0, "subtotal": 55.5}]}, {"codigo": "SV-004", "descricao": "Placa em aço galvanizado #18 – película Tipo X (Diamante) – fornecimento e implantação", "unidade": "m²", "categoria": "Sinalização Vertical", "subcategoria": "", "custo_direto": 726.05, "bdi": 0.3, "preco_venda": 943.87, "componentes": [{"componente": "Chapa de aço galvanizado #18", "tipo": "MATERIAL", "qtd": 1.05, "unid": "m²", "custo_unit": 95.0, "subtotal": 99.75}, {"componente": "Película retrorefletiva Tipo X (diamante)", "tipo": "MATERIAL", "qtd": 1.05, "unid": "m²", "custo_unit": 420.0, "subtotal": 441.0}, {"componente": "Perfil enrijecedor", "tipo": "MATERIAL", "qtd": 1.2, "unid": "m", "custo_unit": 18.0, "subtotal": 21.6}, {"componente": "Impressão serigráfica/vinil", "tipo": "MATERIAL", "qtd": 1.0, "unid": "m²", "custo_unit": 65.0, "subtotal": 65.0}, {"componente": "Encarregado", "tipo": "MO", "qtd": 0.4, "unid": "h", "custo_unit": 52.0, "subtotal": 20.8}, {"componente": "Ajudante (x2)", "tipo": "MO", "qtd": 0.8, "unid": "h", "custo_unit": 28.0, "subtotal": 22.4}, {"componente": "Veículo com guindacho", "tipo": "EQUIP", "qtd": 0.3, "unid": "h", "custo_unit": 185.0, "subtotal": 55.5}]}, {"codigo": "SV-005", "descricao": "Placa em aço galvanizado #16 – película Tipo I – fornecimento e implantação", "unidade": "m²", "categoria": "Sinalização Vertical", "subcategoria": "", "custo_direto": 541.0, "bdi": 0.3, "preco_venda": 703.3, "componentes": [{"componente": "Chapa de aço galvanizado #16", "tipo": "MATERIAL", "qtd": 1.05, "unid": "m²", "custo_unit": 115.0, "subtotal": 120.75}, {"componente": "Película retrorefletiva Tipo I", "tipo": "MATERIAL", "qtd": 1.05, "unid": "m²", "custo_unit": 185.0, "subtotal": 194.25}, {"componente": "Perfil enrijecedor reforçado", "tipo": "MATERIAL", "qtd": 1.5, "unid": "m", "custo_unit": 22.0, "subtotal": 33.0}, {"componente": "Impressão serigráfica/vinil", "tipo": "MATERIAL", "qtd": 1.0, "unid": "m²", "custo_unit": 65.0, "subtotal": 65.0}, {"componente": "Encarregado", "tipo": "MO", "qtd": 0.5, "unid": "h", "custo_unit": 52.0, "subtotal": 26.0}, {"componente": "Ajudante (x2)", "tipo": "MO", "qtd": 1.0, "unid": "h", "custo_unit": 28.0, "subtotal": 28.0}, {"componente": "Veículo com guindacho", "tipo": "EQUIP", "qtd": 0.4, "unid": "h", "custo_unit": 185.0, "subtotal": 74.0}]}, {"codigo": "SV-006", "descricao": "Placa em aço galvanizado #16 – película Tipo III – fornecimento e implantação", "unidade": "m²", "categoria": "Sinalização Vertical", "subcategoria": "", "custo_direto": 724.85, "bdi": 0.3, "preco_venda": 942.31, "componentes": [{"componente": "Perfil alumínio extrudado 6063-T5", "tipo": "MATERIAL", "qtd": 1.05, "unid": "m²", "custo_unit": 185.0, "subtotal": 194.25}, {"componente": "Película retrorefletiva Tipo III", "tipo": "MATERIAL", "qtd": 1.05, "unid": "m²", "custo_unit": 280.0, "subtotal": 294.0}, {"componente": "Perfil enrijecedor alumínio", "tipo": "MATERIAL", "qtd": 1.2, "unid": "m", "custo_unit": 28.0, "subtotal": 33.6}, {"componente": "Impressão UV + vinil", "tipo": "MATERIAL", "qtd": 1.0, "unid": "m²", "custo_unit": 75.0, "subtotal": 75.0}, {"componente": "Encarregado", "tipo": "MO", "qtd": 0.5, "unid": "h", "custo_unit": 52.0, "subtotal": 26.0}, {"componente": "Ajudante (x2)", "tipo": "MO", "qtd": 1.0, "unid": "h", "custo_unit": 28.0, "subtotal": 28.0}, {"componente": "Veículo com guindacho", "tipo": "EQUIP", "qtd": 0.4, "unid": "h", "custo_unit": 185.0, "subtotal": 74.0}]}, {"codigo": "SV-007", "descricao": "Placa em ACM 3mm – película Tipo I – fornecimento e implantação (até 1m²)", "unidade": "m²", "categoria": "Sinalização Vertical", "subcategoria": "", "custo_direto": 236.3, "bdi": 0.28, "preco_venda": 302.46, "componentes": [{"componente": "Poste aço galvanizado perfil C", "tipo": "MATERIAL", "qtd": 1.0, "unid": "und", "custo_unit": 185.0, "subtotal": 185.0}, {"componente": "Concreto para base fck 20 MPa", "tipo": "MATERIAL", "qtd": 0.025, "unid": "m³", "custo_unit": 380.0, "subtotal": 9.5}, {"componente": "Parafusos + abraçadeiras", "tipo": "MATERIAL", "qtd": 0.2, "unid": "kg", "custo_unit": 22.0, "subtotal": 4.4}, {"componente": "Encarregado", "tipo": "MO", "qtd": 0.3, "unid": "h", "custo_unit": 52.0, "subtotal": 15.6}, {"componente": "Ajudante (x2)", "tipo": "MO", "qtd": 0.6, "unid": "h", "custo_unit": 28.0, "subtotal": 16.8}, {"componente": "Furadeira + formas", "tipo": "EQUIP", "qtd": 0.2, "unid": "h", "custo_unit": 25.0, "subtotal": 5.0}]}, {"codigo": "SV-008", "descricao": "Placa em ACM 3mm – película Tipo III – fornecimento e implantação (até 1m²)", "unidade": "m²", "categoria": "Sinalização Vertical", "subcategoria": "", "custo_direto": 182.2, "bdi": 0.28, "preco_venda": 233.22, "componentes": [{"componente": "Parafusos + abraçadeiras reposição", "tipo": "MATERIAL", "qtd": 0.15, "unid": "kg", "custo_unit": 22.0, "subtotal": 3.3}, {"componente": "Encarregado", "tipo": "MO", "qtd": 0.8, "unid": "h", "custo_unit": 52.0, "subtotal": 41.6}, {"componente": "Ajudante (x2)", "tipo": "MO", "qtd": 1.6, "unid": "h", "custo_unit": 28.0, "subtotal": 44.8}, {"componente": "Veículo com guindacho", "tipo": "EQUIP", "qtd": 0.5, "unid": "h", "custo_unit": 185.0, "subtotal": 92.5}]}, {"codigo": "SV-009", "descricao": "Placa em ACM 3mm – película Tipo X – fornecimento e implantação (até 1m²)", "unidade": "m²", "categoria": "Sinalização Vertical", "subcategoria": "", "custo_direto": 16448.0, "bdi": 0.3, "preco_venda": 21382.4, "componentes": [{"componente": "Estrutura tubular aço galvanizado", "tipo": "MATERIAL", "qtd": 1.0, "unid": "CJ", "custo_unit": 8500.0, "subtotal": 8500.0}, {"componente": "Fundação (concreto + armação)", "tipo": "MATERIAL", "qtd": 1.0, "unid": "CJ", "custo_unit": 2800.0, "subtotal": 2800.0}, {"componente": "Parafusos de ancoragem", "tipo": "MATERIAL", "qtd": 1.0, "unid": "CJ", "custo_unit": 380.0, "subtotal": 380.0}, {"componente": "Encarregado + montadores", "tipo": "MO", "qtd": 16.0, "unid": "h", "custo_unit": 52.0, "subtotal": 832.0}, {"componente": "Ajudantes (x4)", "tipo": "MO", "qtd": 32.0, "unid": "h", "custo_unit": 28.0, "subtotal": 896.0}, {"componente": "Guindaste (1 diária)", "tipo": "EQUIP", "qtd": 8.0, "unid": "h", "custo_unit": 380.0, "subtotal": 3040.0}]}, {"codigo": "SV-010", "descricao": "Delineador de curva – fornecimento e implantação", "unidade": "und", "categoria": "Sinalização Vertical", "subcategoria": "", "custo_direto": 223.0, "bdi": 0.25, "preco_venda": 278.75, "componentes": [{"componente": "Materiais de reparo (soldas, rebites)", "tipo": "MATERIAL", "qtd": 1.0, "unid": "CJ", "custo_unit": 25.0, "subtotal": 25.0}, {"componente": "Encarregado", "tipo": "MO", "qtd": 1.0, "unid": "h", "custo_unit": 52.0, "subtotal": 52.0}, {"componente": "Ajudante (x2)", "tipo": "MO", "qtd": 2.0, "unid": "h", "custo_unit": 28.0, "subtotal": 56.0}, {"componente": "Veículo de apoio", "tipo": "EQUIP", "qtd": 0.5, "unid": "h", "custo_unit": 145.0, "subtotal": 72.5}, {"componente": "Prensa de endireitamento", "tipo": "EQUIP", "qtd": 0.5, "unid": "h", "custo_unit": 35.0, "subtotal": 17.5}]}, {"codigo": "SV-011", "descricao": "Marco quilométrico – fornecimento e implantação", "unidade": "und", "categoria": "Sinalização Vertical", "subcategoria": "", "custo_direto": 304.75, "bdi": 0.28, "preco_venda": 390.08, "componentes": [{"componente": "Película retrorefletiva nova", "tipo": "MATERIAL", "qtd": 1.05, "unid": "m²", "custo_unit": 220.0, "subtotal": 231.0}, {"componente": "Primer de limpeza", "tipo": "MATERIAL", "qtd": 0.05, "unid": "L", "custo_unit": 35.0, "subtotal": 1.75}, {"componente": "Técnico de aplicação de película", "tipo": "MO", "qtd": 0.5, "unid": "h", "custo_unit": 58.0, "subtotal": 29.0}, {"componente": "Ajudante", "tipo": "MO", "qtd": 0.5, "unid": "h", "custo_unit": 28.0, "subtotal": 14.0}, {"componente": "Veículo de campo", "tipo": "EQUIP", "qtd": 0.2, "unid": "h", "custo_unit": 145.0, "subtotal": 29.0}]}, {"codigo": "SV-012", "descricao": "Semipórtico metálico vão 8,3m – fornecimento e implantação", "unidade": "und", "categoria": "Sinalização Vertical", "subcategoria": "", "custo_direto": 18.61, "bdi": 0.25, "preco_venda": 23.26, "componentes": [{"componente": "Produtos de limpeza (pró-rata mensal)", "tipo": "MATERIAL", "qtd": 1.0, "unid": "und", "custo_unit": 8.0, "subtotal": 8.0}, {"componente": "Ajudante de limpeza", "tipo": "MO", "qtd": 0.12, "unid": "h", "custo_unit": 28.0, "subtotal": 3.36}, {"componente": "Veículo de campo (pró-rata)", "tipo": "EQUIP", "qtd": 0.05, "unid": "h", "custo_unit": 145.0, "subtotal": 7.25}]}, {"codigo": "SV-013", "descricao": "Placa provisória de obra ACM 3mm c/ cavalete – fornecimento", "unidade": "m²", "categoria": "Sinalização Vertical", "subcategoria": "", "custo_direto": 348.0, "bdi": 0.28, "preco_venda": 445.44, "componentes": [{"componente": "Chapa de aço galvanizado #18", "tipo": "MATERIAL", "qtd": 1.0, "unid": "m²", "custo_unit": 95.0, "subtotal": 95.0}, {"componente": "Película retrorefletiva obra (laranja)", "tipo": "MATERIAL", "qtd": 1.0, "unid": "m²", "custo_unit": 130.0, "subtotal": 130.0}, {"componente": "Impressão/texto obra", "tipo": "MATERIAL", "qtd": 1.0, "unid": "und", "custo_unit": 45.0, "subtotal": 45.0}, {"componente": "Haste + parafusos", "tipo": "MATERIAL", "qtd": 1.0, "unid": "CJ", "custo_unit": 38.0, "subtotal": 38.0}, {"componente": "Encarregado (implantação + retirada)", "tipo": "MO", "qtd": 0.5, "unid": "h", "custo_unit": 52.0, "subtotal": 26.0}, {"componente": "Ajudante", "tipo": "MO", "qtd": 0.5, "unid": "h", "custo_unit": 28.0, "subtotal": 14.0}]}, {"codigo": "SV-014", "descricao": "Cavalete metálico para placa – fornecimento", "unidade": "und", "categoria": "Sinalização Vertical", "subcategoria": "", "custo_direto": 1125.2, "bdi": 0.28, "preco_venda": 1440.26, "componentes": [{"componente": "Chapa de aço + moldura metálica", "tipo": "MATERIAL", "qtd": 1.0, "unid": "und", "custo_unit": 480.0, "subtotal": 480.0}, {"componente": "Impressão digital UV 1,0x0,8m", "tipo": "MATERIAL", "qtd": 1.0, "unid": "und", "custo_unit": 280.0, "subtotal": 280.0}, {"componente": "Hastes de suporte (2 unidades)", "tipo": "MATERIAL", "qtd": 2.0, "unid": "und", "custo_unit": 95.0, "subtotal": 190.0}, {"componente": "Concreto para base", "tipo": "MATERIAL", "qtd": 0.04, "unid": "m³", "custo_unit": 380.0, "subtotal": 15.2}, {"componente": "Encarregado + ajudante", "tipo": "MO", "qtd": 4.0, "unid": "h", "custo_unit": 40.0, "subtotal": 160.0}]}];
+
+// Categoria → prefixo badge
+const catClass = {
+  'Sinalização Horizontal':'cat-SH',
+  'Sinalização Vertical':'cat-SV',
+  'Dispositivos de Proteção':'cat-DM',
+  'Sinalização de Apoio / Provisória':'cat-SA',
+  'Equipes e Composições':'cat-ADM',
+};
+
+let sortCol = 'codigo', sortAsc = true;
+let expandedRows = new Set();
+
+function fmtR(v){
+  return 'R$ ' + v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function fmtPct(v){return (v*100).toFixed(0)+'%'}
+
+function getFiltered(){
+  const q = document.getElementById('busca').value.toLowerCase().trim();
+  const cat = document.getElementById('filtro-cat').value;
+  const tipo = document.getElementById('filtro-tipo').value;
+  return ALL_DATA.filter(r => {
+    if(cat && r.categoria !== cat) return false;
+    if(tipo && r.subcategoria !== tipo) return false;
+    if(q) {
+      const txt = (r.codigo+' '+r.descricao+' '+r.categoria+' '+r.subcategoria+' '+
+        r.componentes.map(c=>c.componente).join(' ')).toLowerCase();
+      if(!txt.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function getSorted(arr){
+  return [...arr].sort((a,b)=>{
+    let va=a[sortCol], vb=b[sortCol];
+    if(typeof va==='string') va=va.toLowerCase(), vb=vb.toLowerCase();
+    if(va<vb) return sortAsc?-1:1;
+    if(va>vb) return sortAsc?1:-1;
+    return 0;
+  });
+}
+
+function render(){
+  const filt = getFiltered();
+  const sorted = getSorted(filt);
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML='';
+
+  if(!sorted.length){
+    document.getElementById('empty').style.display='';
+    document.getElementById('tabela').style.display='none';
+  } else {
+    document.getElementById('empty').style.display='none';
+    document.getElementById('tabela').style.display='';
+  }
+
+  // Stats
+  const vis = sorted.length;
+  const prices = sorted.map(r=>r.preco_venda);
+  document.getElementById('st-total').textContent = ALL_DATA.length;
+  document.getElementById('st-visivel').textContent = vis;
+  document.getElementById('st-min').textContent = vis? fmtR(Math.min(...prices)) : '—';
+  document.getElementById('st-max').textContent = vis? fmtR(Math.max(...prices)) : '—';
+  const catEl = document.getElementById('filtro-cat');
+  document.getElementById('st-cat').textContent = catEl.value || 'TODAS';
+  document.getElementById('contador').textContent = vis + ' ' + (vis===1?'item':'itens');
+
+  sorted.forEach((r,i)=>{
+    const prefix = r.codigo.split('-')[0];
+    const badgeClass = catClass[r.categoria] || 'cat-ADM';
+    const isOpen = expandedRows.has(r.codigo);
+
+    // Calcula breakdown MO/MAT/EQUIP para mini-bar
+    let sumMat=0, sumMo=0, sumEq=0;
+    r.componentes.forEach(c=>{
+      if(c.tipo==='MATERIAL') sumMat+=c.subtotal;
+      else if(c.tipo==='MO') sumMo+=c.subtotal;
+      else sumEq+=c.subtotal;
+    });
+    const cd = r.custo_direto||1;
+    const pMat=Math.round(sumMat/cd*100), pMo=Math.round(sumMo/cd*100), pEq=Math.round(sumEq/cd*100);
+
+    const tr = document.createElement('tr');
+    tr.className = isOpen?'expanded':'';
+    tr.innerHTML = `
+      <td class="td-expand ${isOpen?'expand-open':''}" onclick="toggleRow('${r.codigo}',this)"><span class="td-expand">▶</span></td>
+      <td class="td-codigo">${r.codigo}</td>
+      <td class="td-descricao"><div>${r.descricao}</div>
+        <div style="margin-top:4px;display:flex;gap:3px">
+          <div style="height:4px;width:${pMat}%;background:#1A4A6E;border-radius:2px" title="Material ${pMat}%"></div>
+          <div style="height:4px;width:${pMo}%;background:#1A7A3C;border-radius:2px" title="MO ${pMo}%"></div>
+          <div style="height:4px;width:${pEq}%;background:#9B6000;border-radius:2px" title="Equip ${pEq}%"></div>
+        </div>
+      </td>
+      <td style="white-space:nowrap">${r.unidade}</td>
+      <td class="td-cat"><span class="${badgeClass}">${r.categoria}</span></td>
+      <td class="mono">${fmtR(r.custo_direto)}</td>
+      <td style="text-align:center"><span class="bdi-chip">${fmtPct(r.bdi)}</span></td>
+      <td class="mono positivo">${fmtR(r.preco_venda)}</td>`;
+    tbody.appendChild(tr);
+
+    // CPU detail row
+    const tcpu = document.createElement('tr');
+    tcpu.className = 'cpu-row';
+    tcpu.id = 'cpu-'+r.codigo;
+    tcpu.style.display = isOpen?'':'none';
+
+    let compRows = r.componentes.map(c=>`
+      <tr>
+        <td><span class="cpu-tipo-${c.tipo}">${c.tipo}</span></td>
+        <td>${c.componente}</td>
+        <td style="text-align:right;font-family:var(--font-mono)">${c.qtd.toFixed(3)}</td>
+        <td>${c.unid}</td>
+        <td class="cpu-subtotal">${fmtR(c.custo_unit)}</td>
+        <td class="cpu-subtotal" style="color:var(--mega-cinza-esc)">${fmtR(c.subtotal)}</td>
+      </tr>`).join('');
+
+    tcpu.innerHTML = `<td colspan="8"><div class="cpu-detail">
+      <div class="cpu-title">Composição de Custo Unitário – ${r.codigo}</div>
+      <table class="cpu-table">
+        <thead><tr>
+          <th>Tipo</th><th>Componente</th><th style="text-align:right">Qtd</th>
+          <th>Unid</th><th style="text-align:right">C.Unit.</th><th style="text-align:right">Subtotal</th>
+        </tr></thead>
+        <tbody>${compRows}</tbody>
+      </table>
+      <div class="cpu-summary">
+        <div class="cpu-sum-item"><span class="cpu-sum-label">Custo Direto</span><span class="cpu-sum-value cd">${fmtR(r.custo_direto)}</span></div>
+        <div class="cpu-sum-item"><span class="cpu-sum-label">BDI Aplicado</span><span class="cpu-sum-value bdi">${fmtPct(r.bdi)}</span></div>
+        <div class="cpu-sum-item"><span class="cpu-sum-label">BDI (R$)</span><span class="cpu-sum-value bdi">${fmtR(r.custo_direto*r.bdi)}</span></div>
+        <div class="cpu-sum-item"><span class="cpu-sum-label">Preço de Venda</span><span class="cpu-sum-value pv">${fmtR(r.preco_venda)}</span></div>
+        <div class="cpu-sum-item"><span class="cpu-sum-label">Material</span><span class="cpu-sum-value" style="color:var(--mega-azul);font-size:16px">${fmtR(sumMat)} (${pMat}%)</span></div>
+        <div class="cpu-sum-item"><span class="cpu-sum-label">Mão de Obra</span><span class="cpu-sum-value" style="color:var(--mega-verde);font-size:16px">${fmtR(sumMo)} (${pMo}%)</span></div>
+        <div class="cpu-sum-item"><span class="cpu-sum-label">Equipamentos</span><span class="cpu-sum-value" style="color:#9B6000;font-size:16px">${fmtR(sumEq)} (${pEq}%)</span></div>
+      </div>
+    </div></td>`;
+    tbody.appendChild(tcpu);
+  });
+
+  // Update sort indicators
+  document.querySelectorAll('thead th').forEach(th=>{th.classList.remove('sort-asc','sort-desc')});
+}
+
+function toggleRow(code, tdEl){
+  const cpuRow = document.getElementById('cpu-'+code);
+  const tr = tdEl.parentElement;
+  if(expandedRows.has(code)){
+    expandedRows.delete(code);
+    cpuRow.style.display='none';
+    tr.classList.remove('expanded');
+    tdEl.classList.remove('expand-open');
+  } else {
+    expandedRows.add(code);
+    cpuRow.style.display='';
+    tr.classList.add('expanded');
+    tdEl.classList.add('expand-open');
+  }
+}
+
+function expandAll(){
+  getFiltered().forEach(r=>expandedRows.add(r.codigo));
+  render();
+}
+function collapseAll(){expandedRows.clear(); render();}
+
+function sortBy(col){
+  if(sortCol===col) sortAsc=!sortAsc; else {sortCol=col;sortAsc=true;}
+  render();
+}
+
+// EXPORT
+function openExport(){document.getElementById('modal-export').classList.add('open')}
+function closeExport(){document.getElementById('modal-export').classList.remove('open')}
+
+function doExport(){
+  const fmt = document.querySelector('input[name="fmt"]:checked').value;
+  const scope = document.querySelector('input[name="scope"]:checked').value;
+  const rows = scope==='visible' ? getFiltered() : ALL_DATA;
+  closeExport();
+  if(fmt==='xlsx') exportXLSX(rows);
+  else exportCSV(rows);
+}
+
+function exportXLSX(rows){
+  const wb = XLSX.utils.book_new();
+
+  // Aba 1: Resumo
+  const header = ['Código','Descrição','Unidade','Categoria','Subcategoria','Custo Direto (R$)','BDI (%)','Preço de Venda (R$)','Material (R$)','Mão de Obra (R$)','Equipamentos (R$)'];
+  const wsData = [header, ...rows.map(r=>{
+    let mat=0,mo=0,eq=0;
+    r.componentes.forEach(c=>{if(c.tipo==='MATERIAL')mat+=c.subtotal;else if(c.tipo==='MO')mo+=c.subtotal;else eq+=c.subtotal;});
+    return [r.codigo, r.descricao, r.unidade, r.categoria, r.subcategoria||'', r.custo_direto, (r.bdi*100).toFixed(0)+'%', r.preco_venda, +mat.toFixed(2), +mo.toFixed(2), +eq.toFixed(2)];
+  })];
+  const ws1 = XLSX.utils.aoa_to_sheet(wsData);
+  ws1['!cols'] = [{wch:10},{wch:60},{wch:6},{wch:30},{wch:28},{wch:16},{wch:8},{wch:16},{wch:14},{wch:14},{wch:14}];
+  XLSX.utils.book_append_sheet(wb, ws1, 'Tabela Resumo');
+
+  // Aba 2: CPU Detalhado
+  const cpuHeader = ['Código','Descrição','Un.','Tipo','Componente','Qtd','Unid','C.Unit.(R$)','Subtotal(R$)','BDI','PV(R$)'];
+  const cpuData = [cpuHeader];
+  rows.forEach(r=>{
+    r.componentes.forEach((c,i)=>{
+      cpuData.push([
+        i===0?r.codigo:'', i===0?r.descricao:'', i===0?r.unidade:'',
+        c.tipo, c.componente, c.qtd, c.unid, c.custo_unit, c.subtotal,
+        i===0?(r.bdi*100).toFixed(0)+'%':'',
+        i===0?r.preco_venda:''
+      ]);
+    });
+    cpuData.push(['','','','','CUSTO DIRETO','','','',r.custo_direto,'','']);
+    cpuData.push([]);
+  });
+  const ws2 = XLSX.utils.aoa_to_sheet(cpuData);
+  ws2['!cols'] = [{wch:10},{wch:55},{wch:6},{wch:10},{wch:50},{wch:8},{wch:8},{wch:12},{wch:12},{wch:8},{wch:12}];
+  XLSX.utils.book_append_sheet(wb, ws2, 'CPU Detalhado');
+
+  XLSX.writeFile(wb, 'MEGA_Tabela_CPU_2026.xlsx');
+  showToast('✓ Excel exportado com sucesso!');
+}
+
+function exportCSV(rows){
+  const lines = ['Código;Descrição;Unidade;Categoria;Custo Direto;BDI;Preço de Venda'];
+  rows.forEach(r=>lines.push([r.codigo,'"'+r.descricao+'"',r.unidade,'"'+r.categoria+'"',r.custo_direto.toFixed(2),(r.bdi*100).toFixed(0)+'%',r.preco_venda.toFixed(2)].join(';')));
+  const blob = new Blob(['﻿'+lines.join('\n')],{type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='MEGA_CPU_2026.csv'; a.click();
+  showToast('✓ CSV exportado!');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.style.display='block';
+  setTimeout(()=>t.style.display='none',3500);
+}
+
+// INIT
+document.getElementById('hdate').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short',year:'numeric'}).toUpperCase();
+document.getElementById('busca').addEventListener('input', render);
+document.getElementById('filtro-cat').addEventListener('change', render);
+document.getElementById('filtro-tipo').addEventListener('change', render);
+document.getElementById('modal-export').addEventListener('click', e=>{if(e.target===e.currentTarget) closeExport()});
+
+render();
+</script>
+</body>
+</html>
