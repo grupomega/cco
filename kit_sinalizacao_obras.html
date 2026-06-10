@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kit Sinalização de Obras — MEGA / ECOVIAS CAPIXABA</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --mega-laranja: #E8520A;
+  --mega-laranja-cl: #FFF3EE;
+  --mega-cinza-esc: #1E1E1E;
+  --mega-cinza-med: #3A3A3A;
+  --mega-cinza-sub: #5A5A5A;
+  --mega-cinza-bdr: #D0D0D0;
+  --mega-cinza-bg: #F5F5F5;
+  --mega-branco: #FFFFFF;
+  --mega-verde: #1A7A3C;
+  --mega-verde-cl: #D4EDDA;
+  --mega-vermelho: #C0392B;
+  --mega-vermelho-cl: #FADBD8;
+  --mega-amarelo: #D4890A;
+  --mega-amarelo-cl: #FEF3CD;
+  --mega-azul: #1A4A6E;
+  --mega-azul-cl: #D1E8F5;
+  --font-display: 'Barlow Condensed', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius-md: 8px;
+  --shadow-card: 0 2px 8px rgba(0,0,0,0.10);
+  --shadow-deep: 0 8px 32px rgba(0,0,0,0.18);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-body);
+  background: var(--mega-cinza-bg);
+  color: var(--mega-cinza-esc);
+  font-size: 14px;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--mega-cinza-esc);
+  padding: 0;
+  display: flex;
+  align-items: stretch;
+  min-height: 80px;
+}
+.header-stripe {
+  width: 8px;
+  background: var(--mega-laranja);
+  flex-shrink: 0;
+}
+.header-content {
+  padding: 18px 28px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--mega-branco);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.header-title span { color: var(--mega-laranja); }
+.header-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #888;
+  text-align: right;
+  line-height: 1.6;
+}
+
+/* ── TABS ── */
+.tabs-wrap {
+  background: var(--mega-cinza-esc);
+  padding: 0 28px;
+  display: flex;
+  gap: 4px;
+}
+.tab-btn {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 10px 22px;
+  border: none;
+  background: transparent;
+  color: #888;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+.tab-btn.active {
+  color: var(--mega-laranja);
+  border-bottom-color: var(--mega-laranja);
+  background: rgba(232,82,10,0.08);
+}
+.tab-btn:hover:not(.active) { color: #ccc; }
+
+/* ── MAIN ── */
+.main { padding: 24px 28px; }
+
+.section-block { display: none; }
+.section-block.active { display: block; }
+
+/* ── SITUAÇÃO TITLE ── */
+.sit-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--mega-branco);
+  background: var(--mega-laranja);
+  padding: 10px 20px;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sit-subtitle {
+  background: var(--mega-cinza-med);
+  color: #ccc;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  padding: 6px 20px;
+  border-radius: 0;
+  margin-bottom: 16px;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+}
+
+/* ── CARDS GRID ── */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.card {
+  background: var(--mega-branco);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  border-top: 4px solid var(--mega-laranja);
+}
+.card.verde { border-top-color: var(--mega-verde); }
+.card.azul { border-top-color: var(--mega-azul); }
+.card.amarelo { border-top-color: var(--mega-amarelo); }
+.card.vermelho { border-top-color: var(--mega-vermelho); }
+.card-header {
+  padding: 10px 14px 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-icon { font-size: 20px; }
+.card-label {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--mega-cinza-sub);
+}
+.card-body { padding: 4px 14px 14px; }
+
+/* ── TABLE ── */
+.kit-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.kit-table th {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--mega-cinza-sub);
+  border-bottom: 2px solid var(--mega-cinza-bdr);
+  padding: 5px 8px;
+  text-align: left;
+}
+.kit-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--mega-cinza-bg);
+  vertical-align: middle;
+}
+.kit-table tr:last-child td { border-bottom: none; }
+.kit-table tr:hover td { background: var(--mega-laranja-cl); }
+
+.badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--mega-cinza-bg);
+  color: var(--mega-cinza-med);
+}
+.badge.laranja { background: var(--mega-laranja-cl); color: var(--mega-laranja); }
+.badge.verde { background: var(--mega-verde-cl); color: var(--mega-verde); }
+.badge.azul { background: var(--mega-azul-cl); color: var(--mega-azul); }
+.badge.amarelo { background: var(--mega-amarelo-cl); color: var(--mega-amarelo); }
+.badge.vermelho { background: var(--mega-vermelho-cl); color: var(--mega-vermelho); }
+
+.qty {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--mega-laranja);
+}
+.qty-label { font-size: 11px; color: var(--mega-cinza-sub); }
+
+.kit-total {
+  background: var(--mega-cinza-esc);
+  border-radius: var(--radius-md);
+  padding: 14px 20px;
+  margin-bottom: 24px;
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.kit-total-item { text-align: center; }
+.kit-total-num {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--mega-laranja);
+  display: block;
+}
+.kit-total-desc {
+  font-size: 11px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.kit-total-sep {
+  width: 1px;
+  background: #444;
+  height: 40px;
+}
+
+.alert-box {
+  background: var(--mega-amarelo-cl);
+  border-left: 4px solid var(--mega-amarelo);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: 10px 16px;
+  font-size: 12px;
+  color: var(--mega-cinza-med);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+.alert-box strong { color: var(--mega-amarelo); }
+
+.obs-box {
+  background: var(--mega-azul-cl);
+  border-left: 4px solid var(--mega-azul);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  padding: 10px 16px;
+  font-size: 12px;
+  color: var(--mega-cinza-med);
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+.obs-box strong { color: var(--mega-azul); }
+
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 14px;
+}
+.section-divider span {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--mega-cinza-sub);
+  white-space: nowrap;
+}
+.section-divider:before, .section-divider:after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--mega-cinza-bdr);
+}
+
+.placa-dim {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mega-cinza-esc);
+}
+.placa-cor {
+  font-size: 11px;
+  color: var(--mega-cinza-sub);
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-stripe"></div>
+  <div class="header-content">
+    <div>
+      <div class="header-title">Kit Sinalização de Obras — <span>ECOVIAS CAPIXABA</span></div>
+      <div style="color:#aaa;font-size:12px;margin-top:4px;font-family:var(--font-body)">BR-101 | Trecho Sul | Contrato OS-016/2026 | Manual de Sinalização EcoRodovias / CONTRAN Vol. VII</div>
+    </div>
+    <div class="header-meta">
+      MEGA SINALIZAÇÃO VIÁRIA<br>
+      Rev. Mai/2026
+    </div>
+  </div>
+</div>
+
+<div class="tabs-wrap">
+  <button class="tab-btn active" onclick="switchTab('sit1')">📋 Situação 1 — Pista Simples</button>
+  <button class="tab-btn" onclick="switchTab('sit2')">📋 Situação 2 — Pista Dupla</button>
+  <button class="tab-btn" onclick="switchTab('comp')">📊 Comparativo Geral</button>
+</div>
+
+<div class="main">
+
+<!-- ═══════════════════════════════════ SITUAÇÃO 1 ═══════════════════════════════════ -->
+<div class="section-block active" id="sit1">
+  <div class="sit-title">🛣️ Situação 1 — Pista Simples (com e sem acostamento)</div>
+  <div class="sit-subtitle">Gravatas (1,6 × 1,0 m) | Placas de Trecho (2,8 × 2,0 m e 1,2 × 0,4 m) | 1 faixa por sentido</div>
+
+  <div class="kit-total">
+    <div class="kit-total-item">
+      <span class="kit-total-num">10</span>
+      <span class="kit-total-desc">Placas Verticais</span>
+    </div>
+    <div class="kit-total-sep"></div>
+    <div class="kit-total-item">
+      <span class="kit-total-num">50</span>
+      <span class="kit-total-desc">Cones (mín.)</span>
+    </div>
+    <div class="kit-total-sep"></div>
+    <div class="kit-total-item">
+      <span class="kit-total-num">4</span>
+      <span class="kit-total-desc">Super Cones LED (noturno)</span>
+    </div>
+    <div class="kit-total-sep"></div>
+    <div class="kit-total-item">
+      <span class="kit-total-num">2</span>
+      <span class="kit-total-desc">Pare/Siga ou Semáforo</span>
+    </div>
+    <div class="kit-total-sep"></div>
+    <div class="kit-total-item">
+      <span class="kit-total-num">1</span>
+      <span class="kit-total-desc">PMV Móvel</span>
+    </div>
+  </div>
+
+  <div class="alert-box">
+    <strong>⚠️ Pista Simples — Atenção Operacional:</strong> Operação Pare-Siga obrigatória. A redução a 1 faixa exige controle de tráfego com bandeireiro ou semáforo portátil. Afastamento mínimo de cones: 10 m entre si em trechos retos, 5 m em curvas. Velocidade de obra: máx. 60 km/h (pista simples rural) ou conforme PTT aprovado.
+  </div>
+
+  <!-- PLACAS DE APROXIMAÇÃO / GRAVATAS -->
+  <div class="section-divider"><span>📐 Placas de Aproximação — "Gravatas" (1,6 × 1,0 m)</span></div>
+
+  <div class="cards-grid">
+    <div class="card azul">
+      <div class="card-header"><span class="card-icon">🪧</span><span class="card-label">Placa Principal — Trecho sem Acostamento</span></div>
+      <div class="card-body">
+        <table class="kit-table">
+          <thead><tr><th>Variação</th><th>Dimensão</th><th>Distância</th><th>Qtd</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="badge laranja">Var. 1</span> Próx. 300 m</td>
+              <td><span class="placa-dim">1,6 × 1,0 m</span></td>
+              <td>300 m antes da obra</td>
+              <td><span class="badge verde">1 un</span></td>
+            </tr>
+            <tr>
+              <td><span class="badge laranja">Var. 2</span> A 300 m</td>
+              <td><span class="placa-dim">1,6 × 1,0 m</span></td>
+              <td>Posição ajustada</td>
+              <td><span class="badge verde">1 un</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:8px" class="placa-cor">Fundo: Laranja | Tarja: Preto | Borda: Laranja | Película Grau III</div>
+      </div>
+    </div>
+
+    <div class="card azul">
+      <div class="card-header"><span class="card-icon">🪧</span><span class="card-label">Gravatas Distância (1,0 × 0,4 m) — Pista Simples</span></div>
+      <div class="card-body">
+        <table class="kit-table">
+          <thead><tr><th>Inscrição</th><th>Dimensão</th><th>Qtd</th></tr></thead>
+          <tbody>
+            <tr><td>A – 300 m</td><td><span class="placa-dim">1,0 × 0,4 m</span></td><td><span class="badge verde">2 un</span></td></tr>
+            <tr><td>A – 500 m</td><td><span class="placa-dim">1,0 × 0,4 m</span></td><td><span class="badge verde">2 un</span></td></tr>
+            <tr><td>A – 800 m</td><td><span class="placa-dim">1,0 × 0,4 m</span></td><td><span class="badge verde">2 un</span></td></tr>
+            <tr><td>A – 1 km</td><td><span class="placa-dim">1,0 × 0,4 m</span></td><td><span class="badge verde">2 un</span></td></tr>
+            <tr><td>A – 1,5 km</td><td><span class="placa-dim">1,0 × 0,4 m</span></td><td><span class="badge verde">2 un</span></td></tr>
+            <tr><td>A – 2 km</td><td><span class="placa-dim">1,0 × 0,4 m</span></td><td><span class="badge verde">2 un</span></td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:8px" class="placa-cor">Fundo: Laranja | Tarja: Preto | Borda: Laranja | Película Grau III<br>⚠️ Instaladas nos 2 sentidos — campo e cidade</div>
+      </div>
+    </div>
+
+    <div class="card azul">
+      <div class="card-header"><span class="card-icon">🪧</span><span class="card-label">Gravatas Quadradas (1,0 × 1,0 m) — Pista Simples</span></div>
+      <div class="card-body">
+        <table class="kit-table">
+          <thead><tr><th>Placa</th><th>Dimensão</th><th>Qtd</th></tr></thead>
+          <tbody>
+            <tr><td>Var. 7 — Atenção/Obras</td><td><span class="placa-dim">1,0 × 1,0 m</span></td><td><span class="badge verde">2 un</span></td></tr>
+            <tr><td>Var. 8 — Estreitamento</td><td><span class="placa-dim">1,0 × 1,0 m</span></td><td><span class="badge verde">2 un</span></td></tr>
+            <tr><td>Var. 9 — Desvio/Merge</td><td><span class="placa-dim">1,0 × 1,0 m</span></td><td><span class="badge verde">2 un</span></td></tr>
+            <tr><td>Var. 10 — Fim de Obras</td><td><span class="placa-dim">1,0 × 1,0 m</span></td><td><span class="badge verde">2 un</span></td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:8px" class="placa-cor">Fundo: Laranja | Manual CONTRAN Vol. VII</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DISPOSITIVOS FISICOS -->
+  <div class="section-divider"><span>🔶 Dispositivos Físicos de Sinalização — Pista Simples</span></div>
+
+  <div class="cards-grid">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🔶</span><span class="card-label">Cones de Sinalização</span></div>
+      <div class="card-body">
+        <table class="kit-table">
+          <thead><tr><th>Item</th><th>Especificação</th><th>Qtd Mín.</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Cone Padrão</td>
+              <td>75 cm | faixa refletiva | ABNT NBR 15071</td>
+              <td><span class="badge laranja">40 un</span></td>
+            </tr>
+            <tr>
+              <td>Super Cone</td>
+              <td>≥ 100 cm | retroreflexivo</td>
+              <td><span class="badge laranja">10 un</span></td>
+            </tr>
+            <tr>
+              <td>Espaçamento</td>
+              <td>10 m reto / 5 m curva</td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card verde">
+      <div class="card-header"><span class="card-icon">🚦</span><span class="card-label">Controle de Tráfego — Pare/Siga</span></div>
+      <div class="card-body">
+        <table class="kit-table">
+          <thead><tr><th>Item</th><th>Qtd</th></tr></thead>
+          <tbody>
+            <tr><td>Semáforo portátil / Pare-Siga</td><td><span class="badge verde">1 conjunto</span></td></tr>
+            <tr><td>Bandeireiro (operador treinado)</td><td><span class="badge verde">2 un</span></td></tr>
+            <tr><td>Rádio comunicador</td><td><span class="badge verde">2 un</span></td></tr>
+            <tr><td>EPI reflexivo NR-6 + colete</td><td><span class="badge verde">Toda equipe</span></td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:8px" class="placa-cor">⚠️ Obrigatório em pista simples com redução de faixa</div>
+      </div>
+    </div>
+
+    <div class="card amarelo">
+      <div class="card-header"><span class="card-icon">🌙</span><span class="card-label">Sinalização Noturna (obrigatória)</span></div>
+      <div class="card-body">
+        <table class="kit-table">
+          <thead><tr><th>Item</th><th>Qtd Mín.</th></tr></thead>
+          <tbody>
+            <tr><td>Luz pisca Super LED (sobre cone)</td><td><span class="badge amarelo">10 un</span></td></tr>
+            <tr><td>Gerador / bateria p/ luz</td><td><span class="badge amarelo">1 un</span></td></tr>
+            <tr><td>Barreira Vertical Refletiva</td><td><span class="badge amarelo">10 m</span></td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:8px" class="placa-cor">Acionados ao anoitecer e em condições adversas (chuva/nevoeiro)</div>
+      </div>
+    </div>
+
+    <div class="card azul">
+      <div class="card-header"><span class="card-icon">📡</span><span class="card-label">PMV Móvel e Apoio</span></div>
+      <div class="card-body">
+        <table class="kit-table">
+          <thead><tr><th>Item</th><th>Qtd</th></tr></thead>
+          <tbody>
+            <tr><td>Painel Mensagem Variável (PMV) móvel</td><td><span class="badge azul">1 un</span></td></tr>
+            <tr><td>Cavalete de madeira/metálico</td><td><span class="badge azul">4 un</span></td></tr>
+            <tr><td>Correntes / Fita delimitadora laranja</td><td><span class="badge azul">50 m</span></td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:8px" class="placa-cor">PMV instalado a ≥ 500 m antes da frente de obra</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="obs-box">
+    <strong>📌 Base normativa — Situação 1 (Pista Simples):</strong><br>
+    Manual de Sinalização CONTRAN Vol. VII | Manual EcoRodovias (anexo ao TR 40031384) | NBR 15071 (cones) | Proposta Técnica MEGA 3103ASS Item 25. Placas fundo laranja (X-) com película retroreflexiva Grau III (diamante) para rodovias de alta velocidade.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ SITUAÇÃO 2 ═══════════════════════════════════ -->
+<div class="section-block" id="sit2">
+  <div class="sit-title">🛣️🛣️ Situação 2 — Pista Dupla (com e sem acostamento)</div>
+  <div class="sit-subtitle">Gravatas (1,2 × 0,4 m) | Placas de Trecho (2,8 × 2,0 m) | 2 faixas por sentido — sem Pare/Siga</div>
+
+  <div class="kit-total">
+    <div class="kit-total-item">
+      <span class="kit-total-num">14</span>
+      <span class="kit-total-desc">Placas Verticais</span>
+    </div>
+    <div class="kit-total-sep"></div>
+    <div class="kit-total-item">
+      <span class="kit-total-num">80</span>
+      <span class="kit-total-desc">Cones (mín.)</span>
+    </div>
+    <div class="kit-total-sep"></div>
+    <div class="kit-total-item">
+      <span class="kit-total-num">6</span>
+      <span class="kit-total-desc">Super Cones LED (noturno)</span>
+    </div>
+    <div class="kit-total-sep"></div>
+    <div class="kit-total-item">
+      <span class="kit-total-num">0</span>
+      <span class="kit-total-desc">Pare/Siga (não req.)</span>
+    </div>
+    <div class="kit-total-sep"></div>
+    <div class="kit-total-item">
+      <span class="kit-total-num">1</span>
+      <span class="kit-total-desc">PMV Móvel</span>
+    </div>
+  </div>
+
+  <div class="alert-box">
+    <strong>⚠️ Pista Dupla — Atenção Operacional:</strong> Não exige Pare/Siga — o outro sentido mantém tráfego normal. Redução de 2 para 1 faixa no sentido da obra requer canalização com merge antecipado de ≥ 200 m. Velocidade de obra: máx. 80 km/h (pista dupla) ou conforme PTT. Cones em fileira dupla na zona de transição.
+  </div>
+
+  <!-- PLACAS -->
+  <div class="section-divider"><span>📐 Placas Principais — Trecho Sem Acostamento (2,8 × 2,0 m)</span></div>
+
+  <div class="cards-grid">
+    <div class="card azul">
+      <div class="card-header"><span class="card-icon">🪧</span><span class="card-label">Placa Grande — 2,8 × 2,0 m (Pista Dupla)</span></div>
+      <div class="card-body">
+        <table class="kit-table">
+          <thead><tr><th>Variação</th><th>Dimensão</th><th>Mensagem</th><th>Qtd</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="badge laranja">Var. 1</span> Com Acostamento</td>
+              <td><span class="placa-dim">2,8 × 2,0 m</span></td>
+              <td>TRECHO SEM ACOSTAMENTO / PRÓX. 300 m</td>
+              <td><span class="badge verde">2 un</span></td>
+            </tr>
+            <tr>
+              <td><span class="badge laranja">Var. 2</span> Sem Acostamento</td>
+              <td><span class="placa-dim">2,8 × 2,0 m</span></td>
+              <td>TRECHO SEM ACOSTAMENTO / A 300 m</td>
+              <td><span class="badge verde">2 un</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:8px" class="placa-cor">Fundo: Laranja | Tarja: Preto | Borda: Laranja | Película Grau III | 1 por sentido</div>
+      </div>
+    </div>
+
+    <div class="card azul">
+      <div class="card-header"><span class="card-icon">🪧</span><span class="card-label">Gravatas de Distância (1,2 × 0,4 m) — Pista Dupla</span></div>
+      <div class="card-body">
+        <table class="kit-table">
+          <thead><tr><th>Inscrição</th><th>Dimensão</th><th>Qtd (2 sentidos)</th></tr></thead>
+          <tbody>
+            <tr><td>A – 300 m</td><td><span class="placa-dim">1,2 × 0,4 m</span></td><td><span class="badge verde">2 un</span></td></tr>
+            <tr><td>A – 500 m</td><td><span class="placa-dim">1,2 × 0,4 m</span></td><td><span class="badge verde">2 un</span></td></tr>
+            <tr><td>A – 800 m</td><td><span class="placa-dim">1,2 × 0,4 m</span></td><td><span class="badge verde">2 un</span></td></tr>
+            <tr><td>A – 1 km</td><td><span class="placa-dim">1,2 × 0,4 m</span></td><td><span class="badge verde">2 un</span></td></tr>
+            <tr><td>A – 1,5 km</td><td><span class="placa-dim">1,2 × 0,4 m</span></td><td><span class="badge verde">2 un</span></td></tr>
+            <tr><td>A – 2 km</td><td><span class="placa-dim">1,2 × 0,4 m</span></td><td><span class="badge verde">2 un</span></td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:8px" class="placa-cor">Fonte Série D | Altura 175 mm | Instaladas nos 2 sentidos de tráfego</div>
+      </div>
+    </div>
+
+    <div class="card azul">
+      <div class="card-header"><span class="card-icon">🪧</span><span class="card-label">Gravatas Quadradas (1,2 × 1,2 m) — Pista Dupla</span></div>
+      <div class="card-body">
+        <table class="kit-table">
+          <thead><tr><th>Placa</th><th>Dimensão</th><th>Qtd</th></tr></thead>
+          <tbody>
+            <tr><td>Var. 7 — Atenção/Obras</td><td><span class="placa-dim">1,2 × 1,2 m</span></td><td><span class="badge verde">2 un</span></td></tr>
+            <tr><td>Var. 8 — Estreitamento</td><td><span class="placa-dim">1,2 × 1,2 m</span></td><td><span class="badge verde">2 un</span></td></tr>
+            <tr><td>Var. 9 — Desvio/Merge</td><td><span class="placa-dim">1,2 × 1,2 m</span></td><td><span class="badge verde">2 un</span></td></tr>
+            <tr><td>Var. 10 — Fim de Obras</td><td><span class="placa-dim">1,2 × 1,2 m</span></td><td><span class="badge verde">2 un</span></td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:8px" class="placa-cor">Fundo: Laranja | Manual CONTRAN Vol. VII</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DISPOSITIVOS FISICOS -->
+  <div class="section-divider"><span>🔶 Dispositivos Físicos de Sinalização — Pista Dupla</span></div>
+
+  <div class="cards-grid">
+    <div class="card">
+      <div class="card-header"><span class="card-icon">🔶</span><span class="card-label">Cones de Sinalização</span></div>
+      <div class="card-body">
+        <table class="kit-table">
+          <thead><tr><th>Item</th><th>Especificação</th><th>Qtd Mín.</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Cone Padrão</td>
+              <td>75 cm | faixa refletiva | NBR 15071</td>
+              <td><span class="badge laranja">60 un</span></td>
+            </tr>
+            <tr>
+              <td>Super Cone</td>
+              <td>≥ 100 cm | retroreflexivo</td>
+              <td><span class="badge laranja">20 un</span></td>
+            </tr>
+            <tr>
+              <td>Zona de merge (transição)</td>
+              <td>Cones fileira dupla, espaç. 5 m</td>
+              <td>≥ 200 m</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card verde">
+      <div class="card-header"><span class="card-icon">🚧</span><span class="card-label">Delineadores e Barreiras</span></div>
+      <div class="card-body">
+        <table class="kit-table">
+          <thead><tr><th>Item</th><th>Qtd</th></tr></thead>
+          <tbody>
+            <tr><td>Barreira Vertical Refletiva (Fence)</td><td><span class="badge verde">≥ 30 m</span></td></tr>
+            <tr><td>Delineador balizador flexível</td><td><span class="badge verde">20 un</span></td></tr>
+            <tr><td>Correntes / Fita delimitadora laranja</td><td><span class="badge verde">100 m</span></td></tr>
+            <tr><td>Cavaletes metálicos</td><td><span class="badge verde">6 un</span></td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:8px" class="placa-cor">Barreira obrigatória na separação de sentidos em pista dupla</div>
+      </div>
+    </div>
+
+    <div class="card amarelo">
+      <div class="card-header"><span class="card-icon">🌙</span><span class="card-label">Sinalização Noturna (obrigatória)</span></div>
+      <div class="card-body">
+        <table class="kit-table">
+          <thead><tr><th>Item</th><th>Qtd Mín.</th></tr></thead>
+          <tbody>
+            <tr><td>Luz pisca Super LED (sobre cone)</td><td><span class="badge amarelo">20 un</span></td></tr>
+            <tr><td>Gerador / bateria p/ luzes</td><td><span class="badge amarelo">1 un</span></td></tr>
+            <tr><td>Barreira Vertical Refletiva iluminada</td><td><span class="badge amarelo">30 m</span></td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:8px" class="placa-cor">LED contínuo, cúpula translúcida laranja/amarela | Alimentado por gerador ou bateria</div>
+      </div>
+    </div>
+
+    <div class="card azul">
+      <div class="card-header"><span class="card-icon">📡</span><span class="card-label">PMV Móvel e Apoio</span></div>
+      <div class="card-body">
+        <table class="kit-table">
+          <thead><tr><th>Item</th><th>Qtd</th></tr></thead>
+          <tbody>
+            <tr><td>Painel Mensagem Variável (PMV) móvel</td><td><span class="badge azul">1 un</span></td></tr>
+            <tr><td>Viatura de apoio / escolta (se necessário)</td><td><span class="badge azul">1 un</span></td></tr>
+            <tr><td>Rádio comunicador</td><td><span class="badge azul">4 un</span></td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:8px" class="placa-cor">PMV instalado a ≥ 800 m antes da frente de obra em pista dupla de alta velocidade</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="obs-box">
+    <strong>📌 Base normativa — Situação 2 (Pista Dupla):</strong><br>
+    Manual CONTRAN Vol. VII | Manual EcoRodovias TR 40031384 | Ata de Reunião de Abertura MEGA/ECOVIAS 2026 | NBR 15071 (cones). Pista dupla não exige Pare/Siga, mas exige zona de merge antecipada e barreiras verticais para separar fluxos na área de trabalho.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ COMPARATIVO ═══════════════════════════════════ -->
+<div class="section-block" id="comp">
+  <div class="sit-title">📊 Comparativo Geral — Situação 1 vs Situação 2</div>
+  <div class="sit-subtitle">Consolidado para gestão de estoque e planejamento de frentes de obra</div>
+
+  <div style="background:var(--mega-branco);border-radius:var(--radius-md);box-shadow:var(--shadow-card);overflow:hidden;margin-bottom:24px;">
+    <table class="kit-table" style="width:100%">
+      <thead style="background:var(--mega-cinza-esc);">
+        <tr>
+          <th style="color:#ccc;padding:12px 14px;">Item</th>
+          <th style="color:var(--mega-laranja);padding:12px 14px;">Pista Simples</th>
+          <th style="color:#88AACC;padding:12px 14px;">Pista Dupla</th>
+          <th style="color:#aaa;padding:12px 14px;">Diferença</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:600">Placa 2,8 × 2,0 m</td>
+          <td><span class="badge">0 un</span></td>
+          <td><span class="badge azul">4 un</span></td>
+          <td style="color:var(--mega-azul)">+4 em pista dupla</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Placa 1,6 × 1,0 m</td>
+          <td><span class="badge laranja">2 un</span></td>
+          <td><span class="badge">0 un</span></td>
+          <td style="color:var(--mega-laranja)">Exclusiva pista simples</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Gravata 1,2 × 0,4 m</td>
+          <td><span class="badge">0 un</span></td>
+          <td><span class="badge azul">12 un</span></td>
+          <td style="color:var(--mega-azul)">Exclusiva pista dupla</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Gravata 1,0 × 0,4 m</td>
+          <td><span class="badge laranja">12 un</span></td>
+          <td><span class="badge">0 un</span></td>
+          <td style="color:var(--mega-laranja)">Exclusiva pista simples</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Placa 1,0×1,0 m ou 1,2×1,2 m</td>
+          <td><span class="badge laranja">8 un (1,0×1,0)</span></td>
+          <td><span class="badge azul">8 un (1,2×1,2)</span></td>
+          <td>Tamanho diferente</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Cones Padrão 75 cm</td>
+          <td><span class="badge laranja">40 un</span></td>
+          <td><span class="badge azul">60 un</span></td>
+          <td style="color:var(--mega-azul)">+20 em pista dupla</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Super Cones</td>
+          <td><span class="badge laranja">10 un</span></td>
+          <td><span class="badge azul">20 un</span></td>
+          <td style="color:var(--mega-azul)">+10 em pista dupla</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Luzes LED pisca</td>
+          <td><span class="badge laranja">10 un</span></td>
+          <td><span class="badge azul">20 un</span></td>
+          <td style="color:var(--mega-azul)">+10 em pista dupla</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Pare/Siga ou Semáforo portátil</td>
+          <td><span class="badge verde">Obrigatório</span></td>
+          <td><span class="badge vermelho">Não req.</span></td>
+          <td>Exclusivo pista simples</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Bandeireiro</td>
+          <td><span class="badge verde">2 un</span></td>
+          <td><span class="badge">Opcional</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Barreira Vertical Refletiva</td>
+          <td><span class="badge laranja">10 m</span></td>
+          <td><span class="badge azul">30 m</span></td>
+          <td style="color:var(--mega-azul)">+20 m em pista dupla</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">PMV Móvel</td>
+          <td><span class="badge laranja">1 un</span></td>
+          <td><span class="badge azul">1 un</span></td>
+          <td>Igual</td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Distância PMV antes da obra</td>
+          <td><span class="badge laranja">≥ 500 m</span></td>
+          <td><span class="badge azul">≥ 800 m</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td style="font-weight:600">Velocidade obra (típica)</td>
+          <td><span class="badge laranja">Máx. 60 km/h</span></td>
+          <td><span class="badge azul">Máx. 80 km/h</span></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert-box">
+    <strong>⚠️ Regras críticas comuns às duas situações:</strong><br>
+    1. Placas fundo <strong>laranja</strong> com película Grau III (diamante) — obrigatório em rodovias concessionadas de alta velocidade.<br>
+    2. Sinalização noturna com LED contínuo acionado ao anoitecer e em chuva/nevoeiro — alimentada por gerador ou bateria.<br>
+    3. Cones ABNT NBR 15071 com faixa retroreflexiva — qualquer não conformidade embarga o serviço.<br>
+    4. Projeto de sinalização provisória (PTT) aprovado pela Concessionária com <strong>15 dias de antecedência</strong>.<br>
+    5. Limpeza diária do local: pista, acostamento e dispositivos de sinalização.
+  </div>
+
+  <div class="obs-box">
+    <strong>📌 Referências:</strong> Manual de Sinalização Ecovias Capixaba (TR 40031384) | CONTRAN Vol. VII | Ata de Abertura MEGA/ECOVIAS 2026 | NBR 15071 | Proposta Técnica MEGA Item 25.
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.section-block').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
