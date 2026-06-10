@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Intranet Grupo MEGA | Painel Interno</title>
+  <style>
+    :root{
+      --red:#d71920; --red2:#a80f14; --dark:#111; --gray:#f3f4f6; --mid:#6b7280; --line:#e5e7eb; --white:#fff;
+      --shadow:0 14px 35px rgba(0,0,0,.12); --radius:18px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Arial,Helvetica,sans-serif;background:#f1f1f1;color:var(--dark)}
+    a{text-decoration:none;color:inherit}.hidden{display:none!important}
+    .topbar{background:#111;color:white;padding:9px 28px;font-size:13px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    header{background:white;padding:16px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px;box-shadow:0 4px 16px rgba(0,0,0,.08);position:sticky;top:0;z-index:20}
+    .brand{display:flex;align-items:center;gap:14px}.logo-link{display:flex;align-items:center;text-decoration:none;flex:0 0 auto}.mega-logo{width:150px;height:58px;display:block;object-fit:contain}.logo{width:58px;height:58px;border-radius:15px;background:linear-gradient(135deg,var(--red),#750006);display:grid;place-items:center;color:white;font-weight:900;font-size:18px;letter-spacing:-1px}.brand h1{font-size:23px}.brand span{color:var(--red)}.brand p{font-size:13px;color:var(--mid);margin-top:3px}
+    .nav{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.btn{border:0;border-radius:999px;padding:10px 14px;font-weight:700;cursor:pointer;background:#eee;color:#111}.btn.red{background:var(--red);color:white}.btn.dark{background:#111;color:white}.btn:hover{filter:brightness(.96)}
+    .hero{background:linear-gradient(115deg,rgba(17,17,17,.94),rgba(167,0,8,.9)),url('https://www.grupomega.com.br/wp-content/uploads/2024/01/mega-sinalizacao-rodoviaria.jpg');background-size:cover;background-position:center;color:white;padding:54px 28px}.hero-inner{max-width:1200px;margin:auto;display:grid;grid-template-columns:1.4fr .8fr;gap:24px;align-items:center}.tag{display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);padding:7px 12px;border-radius:999px;font-size:13px;margin-bottom:14px}.profile-badge{display:inline-flex;gap:8px;align-items:center;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);padding:8px 13px;border-radius:999px;font-size:13px;margin:0 0 14px 8px}.profile-badge b{color:#fff}.hero h2{font-size:42px;line-height:1.04;margin-bottom:12px}.hero p{font-size:17px;line-height:1.5;color:#f5f5f5}.hero-card{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:var(--radius);padding:22px;backdrop-filter:blur(8px)}.hero-card b{font-size:28px;display:block}.hero-card small{color:#eee}
+    main{max-width:1200px;margin:28px auto;padding:0 20px}.toolbar{display:grid;grid-template-columns:1fr auto auto;gap:12px;margin-bottom:22px}.search,.input,.select,textarea{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:14px;background:white}textarea{min-height:76px;resize:vertical}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;border-top:5px solid var(--red)}.card h3{font-size:19px;margin-bottom:4px}.card .desc{font-size:13px;color:var(--mid);margin-bottom:14px}.links{display:grid;gap:9px}.link{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--line);border-radius:14px;padding:12px;background:#fafafa}.link:hover{border-color:var(--red);background:#fff5f5}.link strong{font-size:14px}.link small{font-size:12px;color:var(--mid);display:block;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:230px}.arrow{color:var(--red);font-weight:900}.empty{background:white;border-radius:var(--radius);padding:28px;text-align:center;color:var(--mid)}
+    .admin{background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin-bottom:24px;border:2px solid #111}.admin h2{margin-bottom:8px}.admin p{color:var(--mid);font-size:14px;margin-bottom:18px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.form-row{margin-bottom:12px}.form-row label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.table-wrap{overflow:auto;margin-top:18px;border:1px solid var(--line);border-radius:14px}table{width:100%;border-collapse:collapse;background:white;min-width:760px}th,td{padding:11px;border-bottom:1px solid var(--line);font-size:13px;text-align:left}th{background:#111;color:white}td .mini{padding:7px 9px;border:0;border-radius:10px;cursor:pointer;font-weight:700;margin-right:5px}.edit{background:#eee}.del{background:#ffe0e0;color:#9b0000}.status{display:inline-block;padding:5px 9px;border-radius:999px;background:#e8f5e9;color:#1b5e20;font-weight:700;font-size:12px}.status.off{background:#eee;color:#555}.footer{margin-top:34px;background:#111;color:white;padding:22px;text-align:center;font-size:13px}.notice{background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;border-radius:14px;padding:12px;margin-bottom:16px;font-size:14px}
+
+    .section-title{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin:30px 0 14px}.section-title h2{font-size:24px}.section-title p{color:var(--mid);font-size:14px}.profile-box{background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:22px;border-left:6px solid var(--red);display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:14px}.profile-box h3{font-size:20px;margin-bottom:5px}.profile-box span{display:block;color:var(--mid);font-size:13px;margin-top:2px}.profile-box b{font-size:14px}.mood-box{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:22px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border:1px solid var(--line)}.mood-actions{display:flex;gap:8px;flex-wrap:wrap}.mood-btn{border:1px solid var(--line);background:#fafafa;border-radius:999px;padding:10px 14px;font-weight:800;cursor:pointer}.mood-btn.active{background:#111;color:#fff;border-color:#111}.tasks-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.task-col{background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;border-top:5px solid var(--red)}.task-col h3{font-size:18px;margin-bottom:10px}.task-list{display:grid;gap:9px}.task-item{border:1px solid var(--line);border-radius:14px;padding:11px;background:#fafafa}.task-item strong{display:block;font-size:14px}.task-item small{display:block;color:var(--mid);font-size:12px;margin-top:4px;line-height:1.35}.admin-subtitle{font-size:18px;margin:20px 0 10px;border-top:1px solid var(--line);padding-top:18px}.task-item{cursor:pointer;transition:.18s}.task-item:hover{border-color:var(--red);background:#fff5f5;transform:translateY(-1px)}.task-click-hint{display:block;color:var(--red)!important;font-weight:800;margin-top:6px}.detail-page{background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-top:18px;border-left:6px solid var(--red)}.detail-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:16px}.detail-header h2{font-size:26px;margin-bottom:6px}.detail-meta{color:var(--mid);font-size:14px}.detail-content{display:grid;gap:14px}.detail-block{background:#fafafa;border:1px solid var(--line);border-radius:14px;padding:14px}.detail-block h3{font-size:16px;margin-bottom:8px}.detail-block p{color:#333;line-height:1.55;white-space:pre-wrap}.back-btn{border:0;background:#111;color:#fff;border-radius:999px;padding:10px 14px;font-weight:800;cursor:pointer}
+
+    .goals-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px}.goal-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;border-top:5px solid #111}.goal-card.ok{border-top-color:#16a34a}.goal-card.warn{border-top-color:var(--red)}.goal-card h3{font-size:18px;margin-bottom:6px}.goal-card .period{font-size:12px;color:var(--mid);font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-bottom:12px}.goal-numbers{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.goal-number{background:#fafafa;border:1px solid var(--line);border-radius:12px;padding:10px}.goal-number small{display:block;color:var(--mid);font-size:11px;margin-bottom:4px}.goal-number b{font-size:17px}.progress-wrap{height:12px;background:#eee;border-radius:999px;overflow:hidden;margin:8px 0 12px}.progress-bar{height:100%;background:#111;width:0%}.goal-card.ok .progress-bar{background:#16a34a}.goal-card.warn .progress-bar{background:var(--red)}.goal-msg{font-size:13px;line-height:1.45;border-radius:12px;padding:10px;background:#f8fafc;border:1px solid var(--line)}.goal-card.ok .goal-msg{background:#f0fdf4;border-color:#bbf7d0;color:#166534}.goal-card.warn .goal-msg{background:#fff1f2;border-color:#fecdd3;color:#991b1b}.goals-summary{background:#111;color:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:16px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.goals-summary div{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:12px}.goals-summary small{display:block;color:#ddd;font-size:12px}.goals-summary b{font-size:22px}
+
+    @media(max-width:900px){.hero-inner,.grid,.form-grid,.tasks-grid,.profile-box,.goals-grid,.goals-summary{grid-template-columns:1fr}.toolbar{grid-template-columns:1fr}header{align-items:flex-start;flex-direction:column}.hero h2{font-size:32px}}
+    @media print{header,.topbar,.toolbar,.admin,.footer{display:none}.grid{grid-template-columns:repeat(2,1fr)}body{background:white}.card{box-shadow:none;border:1px solid #ddd}}
+  </style>
+</head>
+<body>
+  <div class="topbar"><div>Grupo MEGA · Intranet Corporativa</div><div id="dateNow"></div></div>
+  <header>
+    <div class="brand">
+      <a href="index.html" class="logo-link" title="Página inicial">
+        <svg class="mega-logo" viewBox="0 0 320 120" role="img" aria-label="Grupo MEGA">
+          <rect x="0" y="0" width="120" height="120" rx="22" fill="#d71920"></rect>
+          <text x="60" y="77" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="45" font-weight="900" fill="#fff">MEGA</text>
+          <text x="142" y="47" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="800" fill="#111">GRUPO</text>
+          <text x="142" y="87" font-family="Arial, Helvetica, sans-serif" font-size="46" font-weight="900" fill="#d71920">MEGA</text>
+        </svg>
+      </a>
+      <div><h1>Intranet <span>Grupo MEGA</span></h1><p>Links internos, sistemas, documentos e operação</p></div>
+    </div>
+    <div class="nav">
+      <button class="btn" onclick="toggleAdmin()">Modo Administrador</button>
+      <button class="btn red" onclick="window.print()">Imprimir</button>
+    </div>
+  </header>
+  <section class="hero">
+    <div class="hero-inner">
+      <div><span class="tag">Painel interno editável</span><span id="profileBadge" class="profile-badge hidden"></span><h2>Central de acesso rápido da MEGA</h2><p>Organize todos os sistemas, pastas, documentos, formulários, controles de obra, RH, segurança, financeiro, frota e suprimentos em uma única página.</p></div>
+      <div class="hero-card"><b id="totalLinks">0</b><small>links cadastrados na intranet</small><br><br><b id="totalCats">0</b><small>categorias ativas</small></div>
+    </div>
+  </section>
+  <main>
+    <section id="adminPanel" class="admin hidden">
+      <h2>Gestão dos links</h2>
+      <p>Cadastre, altere, exclua, exporte e importe os links. As alterações ficam salvas neste navegador via localStorage. Para publicação online centralizada, use este HTML como menu principal e direcione os botões para outros sistemas, páginas, formulários e dashboards.</p>
+      <div class="notice"><b>Atenção:</b> na versão HTML puro, cada navegador salva seus próprios links. Para todos verem os mesmos links automaticamente, publique uma lista central JSON ou conecte a página a banco de dados/API.</div>
+      <div class="notice" style="background:#f8fafc;border-color:#d1d5db;color:#111;">
+        <b>Identificação exibida no topo:</b> cadastre o nome da pessoa responsável e o departamento. Essas informações aparecerão na faixa principal da intranet.
+      </div>
+      <div class="form-grid">
+        <div class="form-row"><label>Nome</label><input id="profileName" class="input" placeholder="Ex: Reinaldo Júnior"></div>
+        <div class="form-row"><label>Cargo</label><input id="profileCargo" class="input" placeholder="Ex: Diretor Geral"></div>
+        <div class="form-row"><label>Departamento</label><input id="profileDepartment" class="input" placeholder="Ex: Diretoria, RH, Engenharia, Obras"></div>
+        <div class="form-row"><label>E-mail / Telefone</label><input id="profileContact" class="input" placeholder="Ex: contato@grupomega.com.br / (35) 3212-8407"></div>
+      </div>
+      <div class="actions" style="margin-bottom:18px;">
+        <button class="btn red" type="button" onclick="saveProfile()">Salvar dados do usuário</button>
+        <button class="btn" type="button" onclick="clearProfile()">Limpar dados do usuário</button>
+      </div>
+      <input type="hidden" id="editId">
+      <div class="form-grid">
+        <div class="form-row"><label>Categoria</label><input id="cat" class="input" placeholder="Ex: Operação, RH, Financeiro"></div>
+        <div class="form-row"><label>Nome do link</label><input id="name" class="input" placeholder="Ex: RDO Digital"></div>
+        <div class="form-row"><label>URL / Caminho</label><input id="url" class="input" placeholder="https://... ou \\servidor\pasta"></div>
+        <div class="form-row"><label>Status</label><select id="active" class="select"><option value="true">Ativo</option><option value="false">Inativo</option></select></div>
+      </div>
+      <div class="form-row"><label>Descrição curta</label><textarea id="desc" placeholder="Ex: Controle diário de produção, fotos, equipe e medição."></textarea></div>
+      <div class="actions">
+        <button class="btn red" onclick="saveLink()">Salvar link</button>
+        <button class="btn" onclick="clearForm()">Limpar</button>
+        <button class="btn dark" onclick="exportJSON()">Exportar JSON</button>
+        <label class="btn" for="importFile">Importar JSON</label><input id="importFile" type="file" accept=".json,application/json" class="hidden" onchange="importJSON(event)">
+        <button class="btn" onclick="resetDefault()">Restaurar padrão</button>
+      </div>
+      <div class="table-wrap"><table><thead><tr><th>Categoria</th><th>Nome</th><th>URL</th><th>Status</th><th>Ações</th></tr></thead><tbody id="adminRows"></tbody></table></div>
+
+      <h3 class="admin-subtitle">Atividades e tarefas expostas na página</h3>
+      <input type="hidden" id="taskEditId">
+      <div class="form-grid">
+        <div class="form-row"><label>Periodicidade</label><select id="taskPeriod" class="select"><option>Diária</option><option>Semanal</option><option>Quinzenal</option><option>Mensal</option></select></div>
+        <div class="form-row"><label>Título da atividade/tarefa</label><input id="taskTitle" class="input" placeholder="Ex: Conferir RDOs das obras"></div>
+      </div>
+      <div class="form-row"><label>Resumo que aparece no card</label><textarea id="taskDesc" placeholder="Ex: Validar fotos, produção, equipe, ocorrências e pendências do dia."></textarea></div>
+      <div class="form-row"><label>Detalhes / orientações da página da tarefa</label><textarea id="taskDetails" placeholder="Ex: Passo 1: abrir o sistema de RDO.\nPasso 2: conferir fotos, equipe e produção.\nPasso 3: registrar pendências e comunicar o responsável."></textarea></div>
+      <div class="actions">
+        <button class="btn red" type="button" onclick="saveTask()">Salvar tarefa</button>
+        <button class="btn" type="button" onclick="clearTaskForm()">Limpar tarefa</button>
+      </div>
+      <div class="table-wrap"><table><thead><tr><th>Periodicidade</th><th>Tarefa</th><th>Resumo</th><th>Detalhes</th><th>Ações</th></tr></thead><tbody id="taskRows"></tbody></table></div>
+
+      <h3 class="admin-subtitle">Metas e objetivos para monitoramento</h3>
+      <input type="hidden" id="goalEditId">
+      <div class="form-grid">
+        <div class="form-row"><label>Descrição da meta</label><input id="goalDesc" class="input" placeholder="Ex: Produção de pintura horizontal"></div>
+        <div class="form-row"><label>Período</label><input id="goalPeriod" class="input" placeholder="Ex: Junho/2026, Semana 24, Mensal"></div>
+        <div class="form-row"><label>Meta</label><input id="goalTarget" class="input" type="number" step="0.01" placeholder="Ex: 1000"></div>
+        <div class="form-row"><label>Atual</label><input id="goalCurrent" class="input" type="number" step="0.01" placeholder="Ex: 750"></div>
+      </div>
+      <div class="form-row"><label>Observação / orientação complementar</label><textarea id="goalNote" placeholder="Ex: Intensificar fechamento de RDO, acompanhar produção diária e reduzir paradas."></textarea></div>
+      <div class="actions">
+        <button class="btn red" type="button" onclick="saveGoal()">Salvar meta</button>
+        <button class="btn" type="button" onclick="clearGoalForm()">Limpar meta</button>
+      </div>
+      <div class="table-wrap"><table><thead><tr><th>Descrição</th><th>Período</th><th>Meta</th><th>Atual</th><th>Saldo</th><th>Ações</th></tr></thead><tbody id="goalRows"></tbody></table></div>
+    </section>
+
+    <div class="toolbar">
+      <input id="search" class="search" oninput="render()" placeholder="Buscar link, categoria ou descrição...">
+      <select id="catFilter" class="select" onchange="render()"><option value="">Todas as categorias</option></select>
+      <button class="btn dark" onclick="openAllActive()">Abrir principais</button>
+    </div>
+    <section id="cards" class="grid"></section>
+
+    <section class="section-title">
+      <div><h2>Dados do usuário</h2><p>Identificação configurada pelo administrador.</p></div>
+    </section>
+    <section id="profileBox" class="profile-box hidden"></section>
+
+    <section class="mood-box">
+      <div><h3>Clima atual do usuário</h3><p id="moodText" style="color:var(--mid);font-size:14px;margin-top:4px;">Selecione como você está hoje.</p></div>
+      <div class="mood-actions">
+        <button type="button" class="mood-btn" data-mood="Motivado" onclick="setMood('Motivado')">😊 Motivado</button>
+        <button type="button" class="mood-btn" data-mood="Neutro" onclick="setMood('Neutro')">😐 Neutro</button>
+        <button type="button" class="mood-btn" data-mood="Triste" onclick="setMood('Triste')">😟 Triste</button>
+      </div>
+    </section>
+
+    <section class="section-title">
+      <div><h2>Atividades e tarefas</h2><p>Rotina diária, semanal, quinzenal e mensal determinada pelo administrador.</p></div>
+    </section>
+    <section id="tasksArea" class="tasks-grid"></section>
+    <section id="taskDetailPage" class="detail-page hidden"></section>
+
+    <section class="section-title">
+      <div><h2>Metas e objetivos</h2><p>Monitoramento da evolução, saldo e mensagens automáticas por desempenho.</p></div>
+    </section>
+    <section id="goalsSummary" class="goals-summary hidden"></section>
+    <section id="goalsArea" class="goals-grid"></section>
+  </main>
+  <div class="footer">Grupo MEGA · Intranet Interna · Sinalização, obras, operação e gestão</div>
+
+<script>
+function genId(){
+  if(window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,10);
+}
+function $(id){ return document.getElementById(id); }
+function esc(v){return String(v??'').replace(/[&<>'"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[m]));}
+
+const defaultLinks = [
+  {id:genId(), categoria:'Operação / Obras', nome:'RDO Digital', url:'#', descricao:'Relatório diário de obra, fotos, equipes, produção e ocorrências.', ativo:true},
+  {id:genId(), categoria:'Operação / Obras', nome:'Planejamento de Obras', url:'#', descricao:'Cronogramas, programação semanal, metas e responsáveis.', ativo:true},
+  {id:genId(), categoria:'Operação / Obras', nome:'Controle de Medição', url:'#', descricao:'Medições por contrato, período, frente e cliente.', ativo:true},
+  {id:genId(), categoria:'RH e Segurança', nome:'Ficha de EPI', url:'#', descricao:'Entrega, troca e histórico de EPIs por colaborador.', ativo:true},
+  {id:genId(), categoria:'RH e Segurança', nome:'Admissão e Integração', url:'#', descricao:'Documentos admissionais, treinamentos e integração MEGA.', ativo:true},
+  {id:genId(), categoria:'RH e Segurança', nome:'DDS e Treinamentos', url:'#', descricao:'Materiais de segurança, DDS, NRs e campanhas internas.', ativo:true},
+  {id:genId(), categoria:'Frota e Equipamentos', nome:'Checklist de Caminhões', url:'#', descricao:'Inspeções, manutenção, avarias e disponibilidade da frota.', ativo:true},
+  {id:genId(), categoria:'Frota e Equipamentos', nome:'Controle de Combustível', url:'#', descricao:'Abastecimentos, consumo por obra, equipamento e motorista.', ativo:true},
+  {id:genId(), categoria:'Suprimentos / Estoque', nome:'Requisição de Compras', url:'#', descricao:'Solicitação, aprovação, cotação e compra de materiais.', ativo:true},
+  {id:genId(), categoria:'Suprimentos / Estoque', nome:'Estoque Matriz e Obras', url:'#', descricao:'Tinta, esfera, tachas, placas, cones, defensas e insumos.', ativo:true},
+  {id:genId(), categoria:'Financeiro', nome:'Fluxo de Caixa', url:'#', descricao:'Entradas, saídas, prioridades de pagamento e previsões.', ativo:true},
+  {id:genId(), categoria:'Financeiro', nome:'DRE por Obra', url:'#', descricao:'Resultado financeiro por contrato, obra e centro de custo.', ativo:true},
+  {id:genId(), categoria:'Comercial / Contratos', nome:'CRM Comercial', url:'#', descricao:'Leads, propostas, clientes, follow-up e contratos.', ativo:true},
+  {id:genId(), categoria:'Comercial / Contratos', nome:'Tabela Comercial MEGA', url:'#', descricao:'Preços mínimos, indicados, máximos e composição de serviços.', ativo:true},
+  {id:genId(), categoria:'Documentos Padrão', nome:'Modelos de Declarações', url:'#', descricao:'Declarações, cartas, propostas e documentos institucionais.', ativo:true},
+  {id:genId(), categoria:'Documentos Padrão', nome:'Normas e Procedimentos', url:'#', descricao:'Procedimentos internos, instruções de trabalho e padrões MEGA.', ativo:true}
+];
+
+let links;
+try{ links = JSON.parse(localStorage.getItem('megaIntranetLinks') || 'null') || defaultLinks; }
+catch(e){ links = defaultLinks; }
+let profile;
+try{ profile = JSON.parse(localStorage.getItem('megaIntranetProfile') || 'null') || {nome:'', cargo:'', departamento:'', contato:''}; }
+catch(e){ profile = {nome:'', cargo:'', departamento:'', contato:''}; }
+let tasks;
+try{ tasks = JSON.parse(localStorage.getItem('megaIntranetTasks') || 'null') || []; }
+catch(e){ tasks = []; }
+let goals;
+try{ goals = JSON.parse(localStorage.getItem('megaIntranetGoals') || 'null') || []; }
+catch(e){ goals = []; }
+let mood = localStorage.getItem('megaIntranetMood') || '';
+
+function persist(){localStorage.setItem('megaIntranetLinks', JSON.stringify(links));}
+function persistProfile(){localStorage.setItem('megaIntranetProfile', JSON.stringify(profile));}
+function persistTasks(){localStorage.setItem('megaIntranetTasks', JSON.stringify(tasks));}
+function persistGoals(){localStorage.setItem('megaIntranetGoals', JSON.stringify(goals));}
+
+const ADMIN_PASSWORD='123456';
+function toggleAdmin(){
+  const panel=$('adminPanel');
+  if(panel.classList.contains('hidden')){
+    const senha=prompt('Digite a senha do administrador:');
+    if(senha!==ADMIN_PASSWORD){ alert('Senha incorreta.'); return; }
+    panel.classList.remove('hidden');
+    fillProfileForm();
+    renderAdmin();
+    renderTasksAdmin();
+    renderGoalsAdmin();
+  }else{
+    panel.classList.add('hidden');
+  }
+}
+
+function fillProfileForm(){
+  $('profileName').value = profile.nome || '';
+  $('profileCargo').value = profile.cargo || '';
+  $('profileDepartment').value = profile.departamento || '';
+  $('profileContact').value = profile.contato || '';
+}
+function saveProfile(){
+  profile = {
+    nome: $('profileName').value.trim(),
+    cargo: $('profileCargo').value.trim(),
+    departamento: $('profileDepartment').value.trim(),
+    contato: $('profileContact').value.trim()
+  };
+  persistProfile();
+  renderProfile();
+  alert('Dados do usuário salvos com sucesso.');
+}
+function clearProfile(){
+  if(!confirm('Limpar nome e departamento exibidos no topo?')) return;
+  profile = {nome:'', cargo:'', departamento:'', contato:''};
+  persistProfile();
+  fillProfileForm();
+  renderProfile();
+}
+function renderProfile(){
+  const badge=$('profileBadge');
+  const box=$('profileBox');
+  const nome=(profile.nome||'').trim();
+  const cargo=(profile.cargo||'').trim();
+  const dep=(profile.departamento||'').trim();
+  const contato=(profile.contato||'').trim();
+  if(!nome && !cargo && !dep && !contato){
+    badge.classList.add('hidden'); badge.innerHTML='';
+    if(box){ box.classList.add('hidden'); box.innerHTML=''; }
+    return;
+  }
+  badge.classList.remove('hidden');
+  badge.innerHTML = `${nome ? '<b>'+esc(nome)+'</b>' : ''}${cargo ? '<span>• '+esc(cargo)+'</span>' : ''}${dep ? '<span>• '+esc(dep)+'</span>' : ''}`;
+  if(box){
+    box.classList.remove('hidden');
+    box.innerHTML = `<div><h3>${esc(nome||'Usuário')}</h3><span>${esc(cargo||'Cargo não informado')}</span></div><div><b>Departamento</b><span>${esc(dep||'Não informado')}</span></div><div><b>E-mail / Telefone</b><span>${esc(contato||'Não informado')}</span></div>`;
+  }
+}
+
+function clearForm(){
+  ['editId','cat','name','url','desc'].forEach(id=>$(id).value='');
+  $('active').value='true';
+}
+function saveLink(){
+  const id=$('editId').value || genId();
+  const item={
+    id,
+    categoria:$('cat').value.trim(),
+    nome:$('name').value.trim(),
+    url:$('url').value.trim() || '#',
+    descricao:$('desc').value.trim(),
+    ativo:$('active').value==='true'
+  };
+  if(!item.categoria || !item.nome){alert('Informe categoria e nome do link.');return;}
+  const idx=links.findIndex(l=>l.id===id);
+  if(idx>=0) links[idx]=item; else links.push(item);
+  persist(); clearForm(); render(); renderAdmin();
+  alert('Link salvo com sucesso.');
+}
+function editLink(id){
+  const l=links.find(x=>x.id===id); if(!l)return;
+  $('editId').value=l.id;
+  $('cat').value=l.categoria || '';
+  $('name').value=l.nome || '';
+  $('url').value=l.url || '';
+  $('desc').value=l.descricao || '';
+  $('active').value=String(l.ativo !== false);
+  $('adminPanel').scrollIntoView({behavior:'smooth', block:'start'});
+}
+function deleteLink(id){
+  if(confirm('Excluir este link?')){
+    links=links.filter(l=>l.id!==id);
+    persist(); render(); renderAdmin();
+  }
+}
+function renderAdmin(){
+  const rows=$('adminRows');
+  rows.innerHTML=links.map(l=>`<tr><td>${esc(l.categoria)}</td><td>${esc(l.nome)}</td><td>${esc(l.url)}</td><td><span class="status ${l.ativo!==false?'':'off'}">${l.ativo!==false?'Ativo':'Inativo'}</span></td><td><button type="button" class="mini edit" onclick="editLink('${esc(l.id)}')">Editar</button><button type="button" class="mini del" onclick="deleteLink('${esc(l.id)}')">Apagar</button></td></tr>`).join('');
+}
+function clearTaskForm(){
+  $('taskEditId').value=''; $('taskPeriod').value='Diária'; $('taskTitle').value=''; $('taskDesc').value=''; $('taskDetails').value='';
+}
+function saveTask(){
+  const id=$('taskEditId').value || genId();
+  const item={id, periodo:$('taskPeriod').value, titulo:$('taskTitle').value.trim(), descricao:$('taskDesc').value.trim(), detalhes:$('taskDetails').value.trim()};
+  if(!item.titulo){ alert('Informe o título da tarefa.'); return; }
+  const idx=tasks.findIndex(t=>t.id===id);
+  if(idx>=0) tasks[idx]=item; else tasks.push(item);
+  persistTasks(); clearTaskForm(); renderTasks(); renderTasksAdmin(); alert('Tarefa salva com sucesso.');
+}
+function editTask(id){
+  const t=tasks.find(x=>x.id===id); if(!t)return;
+  $('taskEditId').value=t.id; $('taskPeriod').value=t.periodo||'Diária'; $('taskTitle').value=t.titulo||''; $('taskDesc').value=t.descricao||''; $('taskDetails').value=t.detalhes||'';
+  $('adminPanel').scrollIntoView({behavior:'smooth', block:'end'});
+}
+function deleteTask(id){
+  if(confirm('Excluir esta tarefa?')){ tasks=tasks.filter(t=>t.id!==id); persistTasks(); renderTasks(); renderTasksAdmin(); }
+}
+function renderTasksAdmin(){
+  const rows=$('taskRows'); if(!rows)return;
+  rows.innerHTML=tasks.map(t=>`<tr><td>${esc(t.periodo)}</td><td>${esc(t.titulo)}</td><td>${esc(t.descricao||'')}</td><td>${esc(t.detalhes||'')}</td><td><button type="button" class="mini edit" onclick="editTask('${esc(t.id)}')">Editar</button><button type="button" class="mini del" onclick="deleteTask('${esc(t.id)}')">Apagar</button></td></tr>`).join('') || '<tr><td colspan="5">Nenhuma tarefa cadastrada.</td></tr>';
+}
+function renderTasks(){
+  const area=$('tasksArea'); if(!area)return;
+  const periods=['Diária','Semanal','Quinzenal','Mensal'];
+  area.innerHTML=periods.map(p=>{
+    const arr=tasks.filter(t=>t.periodo===p);
+    return `<article class="task-col"><h3>${p}</h3><div class="task-list">${arr.length?arr.map(t=>`<button type="button" class="task-item" onclick="openTaskDetail('${esc(t.id)}')"><strong>${esc(t.titulo)}</strong>${t.descricao?`<small>${esc(t.descricao)}</small>`:''}<small class="task-click-hint">Clique para ver detalhes</small></button>`).join(''):'<div class="task-item"><small>Nenhuma tarefa cadastrada.</small></div>'}</div></article>`;
+  }).join('');
+}
+
+function openTaskDetail(id){
+  const t=tasks.find(x=>x.id===id); if(!t)return;
+  const page=$('taskDetailPage');
+  page.classList.remove('hidden');
+  page.innerHTML = `<div class="detail-header"><div><h2>${esc(t.titulo)}</h2><div class="detail-meta">Periodicidade: <b>${esc(t.periodo||'')}</b></div></div><button type="button" class="back-btn" onclick="closeTaskDetail()">Voltar</button></div><div class="detail-content"><div class="detail-block"><h3>Resumo</h3><p>${esc(t.descricao||'Sem resumo cadastrado.')}</p></div><div class="detail-block"><h3>Detalhes / orientações</h3><p>${esc(t.detalhes||'Nenhuma orientação detalhada cadastrada pelo administrador.')}</p></div></div>`;
+  page.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function closeTaskDetail(){
+  const page=$('taskDetailPage');
+  page.classList.add('hidden');
+  page.innerHTML='';
+  $('tasksArea').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function clearGoalForm(){
+  $('goalEditId').value=''; $('goalDesc').value=''; $('goalPeriod').value=''; $('goalTarget').value=''; $('goalCurrent').value=''; $('goalNote').value='';
+}
+function parseMoneyNumber(v){
+  if(v===null || v===undefined) return 0;
+  const s=String(v).replace(/\./g,'').replace(',','.');
+  const n=Number(s);
+  return isNaN(n)?0:n;
+}
+function formatNumberBR(n){
+  return Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function saveGoal(){
+  const id=$('goalEditId').value || genId();
+  const item={
+    id,
+    descricao:$('goalDesc').value.trim(),
+    periodo:$('goalPeriod').value.trim(),
+    meta:parseMoneyNumber($('goalTarget').value),
+    atual:parseMoneyNumber($('goalCurrent').value),
+    observacao:$('goalNote').value.trim()
+  };
+  if(!item.descricao){ alert('Informe a descrição da meta.'); return; }
+  if(item.meta<=0){ alert('Informe uma meta maior que zero.'); return; }
+  const idx=goals.findIndex(g=>g.id===id);
+  if(idx>=0) goals[idx]=item; else goals.push(item);
+  persistGoals(); clearGoalForm(); renderGoals(); renderGoalsAdmin(); alert('Meta salva com sucesso.');
+}
+function editGoal(id){
+  const g=goals.find(x=>x.id===id); if(!g)return;
+  $('goalEditId').value=g.id; $('goalDesc').value=g.descricao||''; $('goalPeriod').value=g.periodo||''; $('goalTarget').value=g.meta||0; $('goalCurrent').value=g.atual||0; $('goalNote').value=g.observacao||'';
+  $('adminPanel').scrollIntoView({behavior:'smooth', block:'end'});
+}
+function deleteGoal(id){
+  if(confirm('Excluir esta meta?')){ goals=goals.filter(g=>g.id!==id); persistGoals(); renderGoals(); renderGoalsAdmin(); }
+}
+function goalStatus(g){
+  const meta=Number(g.meta||0), atual=Number(g.atual||0);
+  const saldo=atual-meta;
+  const pct=meta>0 ? Math.min((atual/meta)*100, 999) : 0;
+  const ok=atual>=meta;
+  return {meta, atual, saldo, pct, ok, falta:Math.max(meta-atual,0), supera:Math.max(atual-meta,0)};
+}
+function renderGoalsAdmin(){
+  const rows=$('goalRows'); if(!rows)return;
+  rows.innerHTML=goals.map(g=>{
+    const s=goalStatus(g);
+    const saldoTxt=s.ok ? `+${formatNumberBR(s.supera)}` : `Falta ${formatNumberBR(s.falta)}`;
+    return `<tr><td>${esc(g.descricao)}</td><td>${esc(g.periodo||'')}</td><td>${formatNumberBR(s.meta)}</td><td>${formatNumberBR(s.atual)}</td><td>${esc(saldoTxt)}</td><td><button type="button" class="mini edit" onclick="editGoal('${esc(g.id)}')">Editar</button><button type="button" class="mini del" onclick="deleteGoal('${esc(g.id)}')">Apagar</button></td></tr>`;
+  }).join('') || '<tr><td colspan="6">Nenhuma meta cadastrada.</td></tr>';
+}
+function renderGoals(){
+  const area=$('goalsArea'); const summary=$('goalsSummary'); if(!area || !summary)return;
+  if(!goals.length){ area.innerHTML='<div class="empty">Nenhuma meta cadastrada.</div>'; summary.classList.add('hidden'); summary.innerHTML=''; return; }
+  const totalMeta=goals.reduce((a,g)=>a+Number(g.meta||0),0);
+  const totalAtual=goals.reduce((a,g)=>a+Number(g.atual||0),0);
+  const saldoTotal=totalAtual-totalMeta;
+  const atingidas=goals.filter(g=>goalStatus(g).ok).length;
+  summary.classList.remove('hidden');
+  summary.innerHTML=`<div><small>Total de metas</small><b>${goals.length}</b></div><div><small>Metas atingidas</small><b>${atingidas}</b></div><div><small>Meta total</small><b>${formatNumberBR(totalMeta)}</b></div><div><small>Saldo geral</small><b>${saldoTotal>=0?'+':''}${formatNumberBR(saldoTotal)}</b></div>`;
+  area.innerHTML=goals.map(g=>{
+    const s=goalStatus(g);
+    const pctBar=Math.min(s.pct,100);
+    const msg=s.ok
+      ? `Parabéns! Meta superada em ${formatNumberBR(s.supera)}. Reconhecer o esforço da equipe, registrar o resultado e manter o ritmo.`
+      : `Atenção: faltam ${formatNumberBR(s.falta)} para atingir a meta. Reforce o acompanhamento diário, elimine gargalos e cobre plano de ação dos responsáveis.`;
+    return `<article class="goal-card ${s.ok?'ok':'warn'}"><h3>${esc(g.descricao)}</h3><div class="period">${esc(g.periodo||'Período não informado')}</div><div class="goal-numbers"><div class="goal-number"><small>Meta</small><b>${formatNumberBR(s.meta)}</b></div><div class="goal-number"><small>Atual</small><b>${formatNumberBR(s.atual)}</b></div><div class="goal-number"><small>Saldo</small><b>${s.ok?'+':''}${formatNumberBR(s.saldo)}</b></div></div><div class="progress-wrap"><div class="progress-bar" style="width:${pctBar}%"></div></div><div class="goal-msg">${esc(msg)}${g.observacao?'<br><br><b>Orientação:</b> '+esc(g.observacao):''}</div></article>`;
+  }).join('');
+}
+
+function setMood(value){
+  mood=value; localStorage.setItem('megaIntranetMood', mood); renderMood();
+}
+function renderMood(){
+  document.querySelectorAll('.mood-btn').forEach(btn=>btn.classList.toggle('active', btn.dataset.mood===mood));
+  const txt=$('moodText'); if(!txt)return;
+  txt.textContent = mood ? `Clima atual registrado: ${mood}.` : 'Selecione como você está hoje.';
+}
+function render(){
+  const q=$('search').value.toLowerCase();
+  const f=$('catFilter').value;
+  const cats=[...new Set(links.map(l=>l.categoria).filter(Boolean))].sort();
+  $('catFilter').innerHTML='<option value="">Todas as categorias</option>'+cats.map(c=>`<option value="${esc(c)}" ${c===f?'selected':''}>${esc(c)}</option>`).join('');
+  const filtered=links.filter(l=>(l.ativo!==false) && (!f||l.categoria===f) && (`${l.categoria} ${l.nome} ${l.descricao} ${l.url}`.toLowerCase().includes(q)));
+  const grouped={}; filtered.forEach(l=>(grouped[l.categoria]??=[]).push(l));
+  $('totalLinks').textContent=links.filter(l=>l.ativo!==false).length;
+  $('totalCats').textContent=new Set(links.filter(l=>l.ativo!==false).map(l=>l.categoria)).size;
+  const html=Object.keys(grouped).sort().map(c=>`<article class="card"><h3>${esc(c)}</h3><div class="desc">${grouped[c].length} acesso(s) disponível(is)</div><div class="links">${grouped[c].map(l=>`<a class="link" href="${esc(l.url)}" target="_blank" rel="noopener"><div><strong>${esc(l.nome)}</strong><small>${esc(l.descricao||l.url)}</small></div><div class="arrow">›</div></a>`).join('')}</div></article>`).join('');
+  $('cards').innerHTML=html||'<div class="empty">Nenhum link encontrado.</div>';
+}
+function exportJSON(){
+  const backup = {profile, links, tasks, goals, mood};
+  const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download='backup-intranet-grupo-mega.json'; a.click(); URL.revokeObjectURL(a.href);
+}
+function importJSON(e){
+  const file=e.target.files[0]; if(!file)return;
+  const r=new FileReader();
+  r.onload=()=>{try{
+    const data=JSON.parse(r.result);
+    if(Array.isArray(data)){
+      links=data.map(x=>({...x,id:x.id||genId(),ativo:x.ativo!==false}));
+    }else{
+      links=(data.links||[]).map(x=>({...x,id:x.id||genId(),ativo:x.ativo!==false}));
+      profile=data.profile || {nome:'', cargo:'', departamento:'', contato:''};
+      tasks=(data.tasks||[]).map(x=>({...x,id:x.id||genId()}));
+      goals=(data.goals||[]).map(x=>({...x,id:x.id||genId(), meta:Number(x.meta||0), atual:Number(x.atual||0)}));
+      mood=data.mood || '';
+      localStorage.setItem('megaIntranetMood', mood);
+    }
+    persist(); persistProfile(); persistTasks(); persistGoals(); fillProfileForm(); renderProfile(); renderMood(); renderTasks(); renderGoals(); render(); renderAdmin(); renderTasksAdmin(); renderGoalsAdmin(); alert('Backup importado com sucesso.');
+  }catch(err){alert('Arquivo inválido.');}}
+  r.readAsText(file);
+}
+function resetDefault(){
+  if(confirm('Restaurar lista padrão? Isso substituirá os links salvos neste navegador.')){
+    links=defaultLinks; persist(); render(); renderAdmin();
+  }
+}
+function openAllActive(){links.filter(l=>l.ativo!==false).slice(0,5).forEach(l=>{if(l.url&&l.url!=='#') window.open(l.url,'_blank');});}
+
+$('dateNow').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+renderProfile();
+renderMood();
+renderTasks();
+renderGoals();
+render();
+</script>
+</body>
+</html>
