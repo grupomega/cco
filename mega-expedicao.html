@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gerador de Mensagem de Expedição</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f6f8;
+      color: #1f2937;
+    }
+    .container {
+      max-width: 1220px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+    .header {
+      margin-bottom: 20px;
+    }
+    .header h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+    .header p {
+      margin: 0;
+      color: #6b7280;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+    .field {
+      margin-bottom: 14px;
+    }
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    label {
+      display: block;
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 14px;
+      outline: none;
+      transition: 0.2s;
+      background: #fff;
+    }
+    input:focus, textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .primary {
+      background: #16a34a;
+      color: #fff;
+    }
+    .primary:hover { background: #15803d; }
+    .secondary {
+      background: #2563eb;
+      color: #fff;
+    }
+    .secondary:hover { background: #1d4ed8; }
+    .neutral {
+      background: #e5e7eb;
+      color: #111827;
+    }
+    .neutral:hover { background: #d1d5db; }
+    .output {
+      white-space: pre-wrap;
+      background: #f9fafb;
+      border: 1px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 16px;
+      min-height: 620px;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+    .hint {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #6b7280;
+    }
+    .status {
+      margin-top: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #15803d;
+      min-height: 18px;
+    }
+    @media (max-width: 980px) {
+      .grid, .field-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Gerador de Mensagem de Expedição</h1>
+      <p>Preencha os dados para gerar a mensagem padrão de expedição e orientações ao motorista.</p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Dados da Expedição</h2>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="dataHoje">Data de Hoje</label>
+            <input type="text" id="dataHoje" placeholder="Ex: 20/04/2026" />
+          </div>
+          <div class="field">
+            <label for="pedido">Pedido</label>
+            <input type="text" id="pedido" placeholder="Ex: 1548" />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="nf">NF</label>
+            <input type="text" id="nf" placeholder="Ex: 98745" />
+          </div>
+          <div class="field">
+            <label for="cliente">Cliente</label>
+            <input type="text" id="cliente" placeholder="Ex: Construcap" />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="contato">Contato do Cliente</label>
+            <input type="text" id="contato" placeholder="Ex: João da Silva" />
+          </div>
+          <div class="field">
+            <label for="telefoneContato">Telefone do Contato</label>
+            <input type="text" id="telefoneContato" placeholder="Ex: (11) 99999-9999" />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="envio">Envio</label>
+            <input type="text" id="envio" placeholder="Ex: 20/04" />
+          </div>
+          <div class="field">
+            <label for="transportadora">Transportadora</label>
+            <input type="text" id="transportadora" placeholder="Ex: Rodonaves" />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="motorista">Motorista</label>
+            <input type="text" id="motorista" placeholder="Ex: Carlos" />
+          </div>
+          <div class="field">
+            <label for="caminhao">Caminhão</label>
+            <input type="text" id="caminhao" placeholder="Ex: ABC-1234 / 101" />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="previsaoEntrega">Previsão Entrega</label>
+            <input type="text" id="previsaoEntrega" placeholder="Ex: 22/04" />
+          </div>
+          <div class="field">
+            <label for="responsavelMega">Responsável pela Expedição MEGA</label>
+            <input type="text" id="responsavelMega" placeholder="Ex: Rafael" />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="localEntrega">Local de Entrega</label>
+            <input type="text" id="localEntrega" placeholder="Ex: Obra KM 125 / Almoxarifado Central" />
+          </div>
+          <div class="field">
+            <label for="cidadeEntrega">Cidade de Entrega</label>
+            <input type="text" id="cidadeEntrega" placeholder="Ex: Varginha/MG" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="contatoMega">Contato MEGA</label>
+          <input type="text" id="contatoMega" placeholder="Ex: (35) 99999-9999" />
+        </div>
+
+        <div class="field">
+          <label for="observacao">Observação</label>
+          <textarea id="observacao" placeholder="Ex: Entrega agendada com apoio do encarregado no local. Confirmar recebimento antes de descarregar."></textarea>
+        </div>
+
+        <div class="actions">
+          <button class="primary" onclick="gerarMensagem()">Gerar mensagem</button>
+          <button class="secondary" onclick="copiarMensagem()">Copiar</button>
+          <button class="secondary" onclick="abrirWhatsApp()">Abrir no WhatsApp</button>
+          <button class="neutral" onclick="limparCampos()">Limpar</button>
+        </div>
+
+        <div class="status" id="status"></div>
+      </div>
+
+      <div class="card">
+        <h2>Mensagem Gerada</h2>
+        <div class="output" id="resultado">A mensagem aparecerá aqui.</div>
+        <div class="hint">Depois de gerar, clique em <strong>Abrir no WhatsApp</strong> ou <strong>Copiar</strong>.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function valor(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    function linha(label, value) {
+      return `${label}: [${value || ''}]`;
+    }
+
+    function dataAtualBR() {
+      const hoje = new Date();
+      const dia = String(hoje.getDate()).padStart(2, '0');
+      const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+      const ano = hoje.getFullYear();
+      return `${dia}/${mes}/${ano}`;
+    }
+
+    function preencherDataHojeSeVazio() {
+      const campo = document.getElementById('dataHoje');
+      if (!campo.value.trim()) {
+        campo.value = dataAtualBR();
+      }
+    }
+
+    function montarMensagem() {
+      preencherDataHojeSeVazio();
+
+      const dataHoje = valor('dataHoje');
+      const pedido = valor('pedido');
+      const nf = valor('nf');
+      const cliente = valor('cliente');
+      const contato = valor('contato');
+      const telefoneContato = valor('telefoneContato');
+      const envio = valor('envio');
+      const transportadora = valor('transportadora');
+      const motorista = valor('motorista');
+      const caminhao = valor('caminhao');
+      const previsaoEntrega = valor('previsaoEntrega');
+      const responsavelMega = valor('responsavelMega');
+      const localEntrega = valor('localEntrega');
+      const cidadeEntrega = valor('cidadeEntrega');
+      const contatoMega = valor('contatoMega');
+      const observacao = valor('observacao');
+
+      return [
+        `📦 Expedição ${dataHoje}`,
+        '',
+        linha('Pedido', pedido),
+        linha('NF', nf),
+        linha('Cliente', cliente),
+        linha('Contato', contato),
+        linha('Telefone', telefoneContato),
+        linha('Envio', envio),
+        linha('Transportadora', transportadora),
+        linha('Motorista', motorista),
+        linha('Caminhão', caminhao),
+        linha('Previsão Entrega', previsaoEntrega),
+        linha('Local de Entrega', localEntrega),
+        linha('Cidade de Entrega', cidadeEntrega),
+        '',
+        linha('Responsável pela Expedição MEGA', responsavelMega),
+        linha('Contato', contatoMega),
+        observacao ? `Observação: [${observacao}]` : null,
+        '',
+        '📦 ORIENTAÇÕES DE ENTREGA – GRUPO MEGA',
+        '',
+        '- Enviar Memória do Pedido (Layout)',
+        '- Nota Fiscal deve acompanhar o pedido obrigatoriamente',
+        '- Solicitar assinatura do cliente/recebedor no canhoto ou na NF',
+        '- Tirar foto da NF assinada e enviar para a MEGA (baixa)',
+        '- Tirar foto da entrega no local (evidência obrigatória)',
+        '- Anotar nome completo e documento do recebedor',
+        '',
+        '⚠️ Pontos de atenção:',
+        '',
+        '- Conferir material antes de descarregar',
+        '- Conferida na Time Expedição MEGA',
+        '- Qualquer divergência no recebimento, favor informar imediatamente',
+        '- Não deixar mercadoria sem responsável no local',
+        '- Em caso de divergência, avaria ou recusa: comunicar imediatamente',
+        '- Garantir que a entrega esteja completa conforme pedido'
+      ].filter(Boolean).join('\n');
+    }
+
+    function gerarMensagem() {
+      const mensagem = montarMensagem();
+      document.getElementById('resultado').textContent = mensagem;
+      document.getElementById('status').textContent = 'Mensagem gerada com sucesso.';
+    }
+
+    async function copiarMensagem() {
+      const texto = montarMensagem();
+      document.getElementById('resultado').textContent = texto;
+
+      try {
+        await navigator.clipboard.writeText(texto);
+        document.getElementById('status').textContent = 'Mensagem copiada para a área de transferência.';
+      } catch (erro) {
+        document.getElementById('status').textContent = 'Não foi possível copiar automaticamente. Copie manualmente.';
+      }
+    }
+
+    function abrirWhatsApp() {
+      const texto = montarMensagem();
+      document.getElementById('resultado').textContent = texto;
+      const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
+      window.open(url, '_blank');
+      document.getElementById('status').textContent = 'Mensagem aberta no WhatsApp.';
+    }
+
+    function limparCampos() {
+      [
+        'dataHoje','pedido','nf','cliente','contato','telefoneContato','envio','transportadora',
+        'motorista','caminhao','previsaoEntrega','responsavelMega','localEntrega','cidadeEntrega',
+        'contatoMega','observacao'
+      ].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('resultado').textContent = 'A mensagem aparecerá aqui.';
+      document.getElementById('status').textContent = 'Campos limpos.';
+      preencherDataHojeSeVazio();
+    }
+
+    preencherDataHojeSeVazio();
+  </script>
+</body>
+</html>

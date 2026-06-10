@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Programação Automática - Grupo MEGA</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:Arial, Helvetica, sans-serif; background:#f3f4f6; color:#111827; }
+    .container { max-width:1600px; margin:24px auto; padding:16px; }
+    .grid { display:grid; grid-template-columns:1.25fr 0.95fr; gap:20px; }
+    .card { background:#fff; border-radius:16px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,0.08); }
+    h1 { margin:0 0 10px; }
+    h2 { margin:0 0 16px; }
+    .subtitle { margin:0 0 18px; color:#6b7280; }
+    .section-title { margin:22px 0 10px; font-weight:700; font-size:16px; }
+    .row2, .row3, .row4 { display:grid; gap:12px; margin-bottom:12px; }
+    .row2 { grid-template-columns:1fr 1fr; }
+    .row3 { grid-template-columns:1fr 1fr 1fr; }
+    .row4 { grid-template-columns:1fr 1fr 1fr 1fr; }
+    label { display:block; margin-bottom:6px; font-size:13px; font-weight:700; }
+    input, textarea, select {
+      width:100%; padding:10px; border:1px solid #d1d5db; border-radius:8px; background:#fff; font-size:14px;
+    }
+    textarea { min-height:82px; resize:vertical; }
+    .table-wrap { overflow:auto; border:1px solid #e5e7eb; border-radius:12px; }
+    table { width:100%; border-collapse:collapse; min-width:960px; }
+    th, td { border-bottom:1px solid #e5e7eb; padding:8px; vertical-align:top; }
+    th { background:#eef2f7; text-align:left; font-size:13px; }
+    td input, td select { margin:0; }
+    .actions { margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; }
+    .inline-actions { display:flex; gap:6px; flex-wrap:wrap; }
+    button { padding:10px 12px; border:none; border-radius:8px; cursor:pointer; font-weight:700; }
+    .primary{ background:#16a34a; color:#fff; }
+    .secondary{ background:#2563eb; color:#fff; }
+    .danger{ background:#dc2626; color:#fff; }
+    .light{ background:#e5e7eb; color:#111827; }
+    .warn{ background:#f59e0b; color:#fff; }
+    .output { white-space:pre-wrap; min-height:240px; background:#f9fafb; padding:14px; border-radius:10px; border:1px dashed #cbd5e1; line-height:1.65; }
+    .pill-box { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .pill { padding:8px 10px; border-radius:999px; font-size:12px; font-weight:700; }
+    .pill.info { background:#dbeafe; color:#1d4ed8; }
+    .pill.ok { background:#dcfce7; color:#15803d; }
+    .pill.alert { background:#fee2e2; color:#b91c1c; }
+    .mini-panel { background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px; padding:12px; margin-top:14px; }
+    .mini-panel h3 { margin:0 0 10px; font-size:15px; }
+    .status { margin-top:10px; font-size:13px; font-weight:700; color:#15803d; min-height:18px; }
+    .analysis { white-space:pre-wrap; font-size:13px; line-height:1.55; color:#374151; }
+    .msg-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    @media (max-width: 1200px) {
+      .grid, .row2, .row3, .row4 { grid-template-columns:1fr; }
+      table { min-width:760px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Programação Automática – Grupo MEGA</h1>
+  <p class="subtitle">Planejamento operacional com serviços, metas diárias, mobilização, materiais, análise de prazo e geração automática de mensagens para CCO e campo.</p>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Dados Gerais</h2>
+
+      <div class="row4">
+        <div>
+          <label for="obra">Obra</label>
+          <input id="obra" value="OBRA RIO" placeholder="Obra">
+        </div>
+        <div>
+          <label for="coordenador">Coordenador</label>
+          <input id="coordenador" value="Valério" placeholder="Coordenador">
+        </div>
+        <div>
+          <label for="dataAtual">Data atual</label>
+          <input id="dataAtual" placeholder="DD/MM/AAAA">
+        </div>
+        <div>
+          <label for="dataFim">Previsão de término</label>
+          <input id="dataFim" placeholder="DD/MM/AAAA">
+        </div>
+      </div>
+
+      <div class="row2">
+        <div>
+          <label for="demanda">Demanda</label>
+          <textarea id="demanda" placeholder="Descreva a demanda"></textarea>
+        </div>
+        <div>
+          <label for="msgExec">Mensagem operacional</label>
+          <textarea id="msgExec">A equipe ficará responsável pela execução da sinalização da frente de obra, garantindo organização, produtividade e segurança da operação.</textarea>
+        </div>
+      </div>
+
+      <div class="section-title">Serviços / metas de produção</div>
+      <div class="table-wrap">
+        <table id="servicos">
+          <thead>
+            <tr>
+              <th style="width:22%">Descrição do serviço</th>
+              <th style="width:9%">Unidade</th>
+              <th style="width:10%">Quantidade</th>
+              <th style="width:11%">Meta diária</th>
+              <th style="width:11%">Dias necessários</th>
+              <th style="width:19%">Observação</th>
+              <th style="width:18%">Ações</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="actions">
+        <button onclick="addServico()" class="secondary" type="button">+ Serviço</button>
+      </div>
+
+      <div class="section-title">Equipamentos</div>
+      <div class="table-wrap">
+        <table id="equipamentos">
+          <thead><tr><th>Equipamento</th><th>Status</th><th>Observação</th><th>Ações</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="actions">
+        <button onclick="addEquip()" class="secondary" type="button">+ Equipamento</button>
+      </div>
+
+      <div class="section-title">Equipe</div>
+      <div class="table-wrap">
+        <table id="equipe">
+          <thead><tr><th>Nome</th><th>Função</th><th>Status</th><th>Observação</th><th>Ações</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="actions">
+        <button onclick="addEquipe()" class="secondary" type="button">+ Colaborador</button>
+      </div>
+
+      <div class="section-title">Materiais</div>
+      <div class="table-wrap">
+        <table id="materiais">
+          <thead><tr><th>Descrição</th><th>Unidade</th><th>Quantidade</th><th>Ações</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="actions">
+        <button onclick="addMaterial()" class="secondary" type="button">+ Material</button>
+      </div>
+
+      <div class="section-title">Envio</div>
+      <div class="row3">
+        <div>
+          <label for="dds">DDS automático</label>
+          <input id="dds" placeholder="DDS automático" readonly>
+        </div>
+        <div>
+          <label for="numeroCCO">Número WhatsApp CCO</label>
+          <input id="numeroCCO" placeholder="5535999999999">
+        </div>
+        <div>
+          <label for="numeroCampo">Número WhatsApp Campo</label>
+          <input id="numeroCampo" placeholder="5535999999999">
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="primary" onclick="gerarMensagens()">Gerar mensagens</button>
+        <button class="warn" onclick="gerarDDS()">Gerar DDS</button>
+        <button class="secondary" onclick="copiarCCO()">Copiar CCO</button>
+        <button class="secondary" onclick="copiarCampo()">Copiar Campo</button>
+        <button class="secondary" onclick="zapCCO()">WhatsApp CCO</button>
+        <button class="secondary" onclick="zapCampo()">WhatsApp Campo</button>
+        <button class="light" onclick="restaurarPadrao()">Restaurar padrão</button>
+      </div>
+
+      <div class="status" id="status"></div>
+    </div>
+
+    <div class="card">
+      <h2>Resumo e análise</h2>
+      <div class="pill-box" id="pills"></div>
+
+      <div class="mini-panel">
+        <h3>Leitura do planejamento</h3>
+        <div class="analysis" id="analise">A análise aparecerá aqui.</div>
+      </div>
+
+      <div class="mini-panel">
+        <h3>Mensagem CCO</h3>
+        <div class="output" id="outCCO"></div>
+        <div class="msg-actions">
+          <button class="secondary" onclick="copiarCCO()">Copiar</button>
+          <button class="secondary" onclick="zapCCO()">Abrir no WhatsApp</button>
+        </div>
+      </div>
+
+      <div class="mini-panel">
+        <h3>Mensagem resumida para Operação / Campo</h3>
+        <div class="output" id="outCampo"></div>
+        <div class="msg-actions">
+          <button class="secondary" onclick="copiarCampo()">Copiar</button>
+          <button class="secondary" onclick="zapCampo()">Abrir no WhatsApp</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const temas = [
+  'Uso correto de EPIs',
+  'Sinalização segura da frente de serviço',
+  'Comunicação entre equipe e operação',
+  'Risco de atropelamento em obra viária',
+  'Organização e disciplina na execução',
+  'Checklist de equipamentos antes do início da jornada',
+  'Prevenção de acidentes com máquinas e veículos',
+  'Foco em produtividade com segurança',
+  'Isolamento correto da área de trabalho',
+  'Conferência de materiais e prevenção de retrabalho'
+];
+
+const servicosPadrao = [
+  { descricao:'Pintura mecanizada', unidade:'m²', quantidade:'30000', meta:'2500', observacao:'' },
+  { descricao:'Pintura manual', unidade:'m²', quantidade:'1500', meta:'300', observacao:'' }
+];
+const equipamentosPadrao = [
+  { equipamento:'Caminhão de pintura novo – Grupo MEGA', status:'já mobilizado', observacao:'equipamento principal da operação' },
+  { equipamento:'Caminhão Iveco', status:'mobilizar', observacao:'deve ser mobilizado para apoio' }
+];
+const equipePadrao = [
+  { nome:'Sebastião', funcao:'Guia', status:'✅', observacao:'integrado' },
+  { nome:'Clóvis', funcao:'Operador', status:'❌', observacao:'integrar' },
+  { nome:'Anderson', funcao:'Operador', status:'❌', observacao:'integrar' },
+  { nome:'Ezequiel', funcao:'Pintura Manual', status:'✅', observacao:'integrado (verificar com Valério necessidade)' }
+];
+const materiaisPadrao = [
+  { descricao:'Tinta', unidade:'balde', quantidade:'20' },
+  { descricao:'Microesfera', unidade:'saco', quantidade:'15' }
+];
+
+function hojeBR() {
+  const d = new Date();
+  return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+}
+
+function criarBtn(texto, classe, fn) {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = classe;
+  b.textContent = texto;
+  b.onclick = fn;
+  return b;
+}
+
+function excluirOuLimparLinha(tr, tbodySelector, limparFn) {
+  const tbody = document.querySelector(tbodySelector);
+  if (tbody.querySelectorAll('tr').length <= 1) {
+    limparFn(tr);
+    return;
+  }
+  tr.remove();
+  atualizarAnalise();
+}
+
+function calcDiasNecessarios(qtd, meta) {
+  const q = parseFloat(String(qtd).replace(',', '.'));
+  const m = parseFloat(String(meta).replace(',', '.'));
+  if (!q || !m || m <= 0) return '';
+  return Math.ceil(q / m);
+}
+
+function parseBRDate(str) {
+  const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec((str || '').trim());
+  if (!m) return null;
+  const dt = new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
+  return isNaN(dt.getTime()) ? null : dt;
+}
+
+function diasEntreDatas(inicio, fim) {
+  const di = parseBRDate(inicio);
+  const df = parseBRDate(fim);
+  if (!di || !df) return null;
+  const ms = df - di;
+  return Math.floor(ms / 86400000) + 1;
+}
+
+function addServico(d = { descricao:'', unidade:'', quantidade:'', meta:'', observacao:'' }) {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input class="srv-desc" value="${d.descricao || ''}"></td>
+    <td><input class="srv-und" value="${d.unidade || ''}"></td>
+    <td><input class="srv-qtd" value="${d.quantidade || ''}"></td>
+    <td><input class="srv-meta" value="${d.meta || ''}"></td>
+    <td><input class="srv-dias" value="" readonly></td>
+    <td><input class="srv-obs" value="${d.observacao || ''}"></td>
+    <td><div class="inline-actions"></div></td>`;
+  const actions = tr.querySelector('.inline-actions');
+  actions.appendChild(criarBtn('Limpar', 'light', () => limparServico(tr)));
+  actions.appendChild(criarBtn('Excluir', 'danger', () => excluirOuLimparLinha(tr, '#servicos tbody', limparServico)));
+  tr.querySelector('.srv-qtd').addEventListener('input', () => { atualizarDiasServico(tr); atualizarAnalise(); });
+  tr.querySelector('.srv-meta').addEventListener('input', () => { atualizarDiasServico(tr); atualizarAnalise(); });
+  tr.querySelector('.srv-desc').addEventListener('input', atualizarAnalise);
+  document.querySelector('#servicos tbody').appendChild(tr);
+  atualizarDiasServico(tr);
+}
+
+function limparServico(tr) {
+  tr.querySelector('.srv-desc').value = '';
+  tr.querySelector('.srv-und').value = '';
+  tr.querySelector('.srv-qtd').value = '';
+  tr.querySelector('.srv-meta').value = '';
+  tr.querySelector('.srv-dias').value = '';
+  tr.querySelector('.srv-obs').value = '';
+  atualizarAnalise();
+}
+
+function atualizarDiasServico(tr) {
+  const qtd = tr.querySelector('.srv-qtd').value;
+  const meta = tr.querySelector('.srv-meta').value;
+  const dias = calcDiasNecessarios(qtd, meta);
+  tr.querySelector('.srv-dias').value = dias;
+}
+
+function addEquip(d = { equipamento:'', status:'', observacao:'' }) {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input class="eq-desc" value="${d.equipamento || ''}"></td>
+    <td><input class="eq-status" value="${d.status || ''}"></td>
+    <td><input class="eq-obs" value="${d.observacao || ''}"></td>
+    <td><div class="inline-actions"></div></td>`;
+  const actions = tr.querySelector('.inline-actions');
+  actions.appendChild(criarBtn('Limpar', 'light', () => limparEquip(tr)));
+  actions.appendChild(criarBtn('Excluir', 'danger', () => excluirOuLimparLinha(tr, '#equipamentos tbody', limparEquip)));
+  document.querySelector('#equipamentos tbody').appendChild(tr);
+}
+
+function limparEquip(tr) {
+  tr.querySelector('.eq-desc').value = '';
+  tr.querySelector('.eq-status').value = '';
+  tr.querySelector('.eq-obs').value = '';
+}
+
+function addEquipe(d = { nome:'', funcao:'', status:'✅', observacao:'' }) {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input class="eqp-nome" value="${d.nome || ''}"></td>
+    <td><input class="eqp-funcao" value="${d.funcao || ''}"></td>
+    <td><select class="eqp-status"><option value="✅" ${d.status==='✅'?'selected':''}>✅</option><option value="❌" ${d.status==='❌'?'selected':''}>❌</option><option value="⚠️" ${d.status==='⚠️'?'selected':''}>⚠️</option></select></td>
+    <td><input class="eqp-obs" value="${d.observacao || ''}"></td>
+    <td><div class="inline-actions"></div></td>`;
+  const actions = tr.querySelector('.inline-actions');
+  actions.appendChild(criarBtn('Limpar', 'light', () => limparEquipe(tr)));
+  actions.appendChild(criarBtn('Excluir', 'danger', () => excluirOuLimparLinha(tr, '#equipe tbody', limparEquipe)));
+  document.querySelector('#equipe tbody').appendChild(tr);
+}
+
+function limparEquipe(tr) {
+  tr.querySelector('.eqp-nome').value = '';
+  tr.querySelector('.eqp-funcao').value = '';
+  tr.querySelector('.eqp-status').value = '✅';
+  tr.querySelector('.eqp-obs').value = '';
+}
+
+function addMaterial(d = { descricao:'', unidade:'', quantidade:'' }) {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input class="mat-desc" value="${d.descricao || ''}"></td>
+    <td><input class="mat-und" value="${d.unidade || ''}"></td>
+    <td><input class="mat-qtd" value="${d.quantidade || ''}"></td>
+    <td><div class="inline-actions"></div></td>`;
+  const actions = tr.querySelector('.inline-actions');
+  actions.appendChild(criarBtn('Limpar', 'light', () => limparMaterial(tr)));
+  actions.appendChild(criarBtn('Excluir', 'danger', () => excluirOuLimparLinha(tr, '#materiais tbody', limparMaterial)));
+  document.querySelector('#materiais tbody').appendChild(tr);
+}
+
+function limparMaterial(tr) {
+  tr.querySelector('.mat-desc').value = '';
+  tr.querySelector('.mat-und').value = '';
+  tr.querySelector('.mat-qtd').value = '';
+}
+
+function gerarDDS() {
+  const tema = temas[Math.floor(Math.random() * temas.length)];
+  document.getElementById('dds').value = tema;
+  document.getElementById('status').textContent = 'DDS atualizado.';
+}
+
+function listarServicosCompleto() {
+  const linhas = [];
+  document.querySelectorAll('#servicos tbody tr').forEach(tr => {
+    const desc = tr.querySelector('.srv-desc').value.trim();
+    const und = tr.querySelector('.srv-und').value.trim();
+    const qtd = tr.querySelector('.srv-qtd').value.trim();
+    const meta = tr.querySelector('.srv-meta').value.trim();
+    const dias = tr.querySelector('.srv-dias').value.trim();
+    const obs = tr.querySelector('.srv-obs').value.trim();
+    if (desc) {
+      let txt = `• ${desc}`;
+      if (und) txt += ` / ${und}`;
+      if (qtd) txt += ` / Qtd: ${qtd}`;
+      if (meta) txt += ` / Meta diária: ${meta}`;
+      if (dias) txt += ` / Dias necessários: ${dias}`;
+      if (obs) txt += ` / Obs: ${obs}`;
+      linhas.push(txt);
+    }
+  });
+  return linhas.join('\n');
+}
+
+function listarServicosResumido() {
+  const linhas = [];
+  document.querySelectorAll('#servicos tbody tr').forEach(tr => {
+    const desc = tr.querySelector('.srv-desc').value.trim();
+    const meta = tr.querySelector('.srv-meta').value.trim();
+    if (desc) {
+      let txt = `• ${desc}`;
+      if (meta) txt += ` / Meta: ${meta}`;
+      linhas.push(txt);
+    }
+  });
+  return linhas.join('\n');
+}
+
+function listarTabela(tableId, classes, formatter) {
+  const linhas = [];
+  document.querySelectorAll(`${tableId} tbody tr`).forEach(tr => {
+    const vals = classes.map(c => {
+      const el = tr.querySelector(c);
+      return el ? el.value.trim() : '';
+    });
+    const txt = formatter(vals);
+    if (txt) linhas.push(txt);
+  });
+  return linhas.join('\n');
+}
+
+function getServicosData() {
+  const lista = [];
+  document.querySelectorAll('#servicos tbody tr').forEach(tr => {
+    const descricao = tr.querySelector('.srv-desc').value.trim();
+    const quantidade = tr.querySelector('.srv-qtd').value.trim();
+    const meta = tr.querySelector('.srv-meta').value.trim();
+    const dias = tr.querySelector('.srv-dias').value.trim();
+    if (descricao) lista.push({ descricao, quantidade, meta, dias: Number(dias || 0) });
+  });
+  return lista;
+}
+
+function atualizarAnalise() {
+  const dataAtual = document.getElementById('dataAtual').value.trim();
+  const dataFim = document.getElementById('dataFim').value.trim();
+  const diasDisponiveis = diasEntreDatas(dataAtual, dataFim);
+  const servicos = getServicosData();
+  const maiorPrazo = servicos.reduce((m, s) => Math.max(m, s.dias || 0), 0);
+  const qtdServicos = servicos.length;
+  const totalEquipe = document.querySelectorAll('#equipe tbody tr').length;
+  const totalEquip = document.querySelectorAll('#equipamentos tbody tr').length;
+  const totalMateriais = document.querySelectorAll('#materiais tbody tr').length;
+
+  const pills = [];
+  pills.push(`<span class="pill info">Serviços: ${qtdServicos}</span>`);
+  pills.push(`<span class="pill info">Equipe: ${totalEquipe}</span>`);
+  pills.push(`<span class="pill info">Equipamentos: ${totalEquip}</span>`);
+  pills.push(`<span class="pill info">Materiais: ${totalMateriais}</span>`);
+  if (diasDisponiveis != null) pills.push(`<span class="pill ok">Dias no prazo: ${diasDisponiveis}</span>`);
+  if (maiorPrazo) pills.push(`<span class="pill ${diasDisponiveis != null && maiorPrazo > diasDisponiveis ? 'alert' : 'ok'}">Maior prazo de serviço: ${maiorPrazo} dia(s)</span>`);
+  document.getElementById('pills').innerHTML = pills.join('');
+
+  const linhas = [];
+  if (diasDisponiveis == null) {
+    linhas.push('Preencha Data atual e Previsão de término no formato DD/MM/AAAA para ativar a análise de prazo.');
+  } else {
+    linhas.push(`Janela total disponível: ${diasDisponiveis} dia(s).`);
+    if (maiorPrazo > diasDisponiveis) {
+      linhas.push(`ALERTA: pelo menos um serviço exige ${maiorPrazo} dia(s), acima do prazo disponível.`);
+      linhas.push('Ação sugerida: aumentar a meta diária, reforçar equipe/equipamento, ou rever a data de término.');
+    } else if (maiorPrazo > 0) {
+      linhas.push(`Planejamento compatível com o prazo informado. O maior prazo individual é de ${maiorPrazo} dia(s).`);
+    }
+  }
+
+  servicos.forEach(s => {
+    if (s.dias) {
+      const situacao = diasDisponiveis != null && s.dias > diasDisponiveis ? 'NÃO FECHA O PRAZO' : 'ok';
+      linhas.push(`- ${s.descricao}: ${s.dias} dia(s) necessários. Situação: ${situacao}.`);
+    }
+  });
+
+  if (!servicos.length) linhas.push('Nenhum serviço lançado ainda.');
+  document.getElementById('analise').textContent = linhas.join('\n');
+}
+
+function montarMensagemCCO() {
+  if (!document.getElementById('dds').value.trim()) gerarDDS();
+  atualizarAnalise();
+
+  const obra = document.getElementById('obra').value.trim();
+  const coordenador = document.getElementById('coordenador').value.trim();
+  const dataAtual = document.getElementById('dataAtual').value.trim();
+  const dataFim = document.getElementById('dataFim').value.trim();
+  const demanda = document.getElementById('demanda').value.trim();
+  const msgExec = document.getElementById('msgExec').value.trim();
+  const dds = document.getElementById('dds').value.trim();
+
+  const equipe = listarTabela('#equipe', ['.eqp-status', '.eqp-nome', '.eqp-funcao', '.eqp-obs'], v => (v[1] || v[2]) ? `${v[0]} ${v[1]}${v[2] ? ' - ' + v[2] : ''}${v[3] ? ' – ' + v[3] : ''}` : '');
+  const equip = listarTabela('#equipamentos', ['.eq-desc', '.eq-status', '.eq-obs'], v => v[0] ? `• ${v[0]}${v[1] ? ' (' + v[1] + ')' : ''}${v[2] ? ' – ' + v[2] : ''}` : '');
+  const mats = listarTabela('#materiais', ['.mat-desc', '.mat-und', '.mat-qtd'], v => v[0] ? `• ${v[0]}${v[1] ? ' / ' + v[1] : ''}${v[2] ? ' / Qtd: ' + v[2] : ''}` : '');
+  const servs = listarServicosCompleto();
+
+  return [
+    `📢 PROGRAMAÇÃO – ${obra}`,
+    `📅 Data da atualização: ${dataAtual}`,
+    `🏁 Previsão de término: ${dataFim}`,
+    `Coordenador: ${coordenador}`,
+    `Demanda: ${demanda}`,
+    `🛠️ Serviços e metas`,
+    servs,
+    `🚚 Equipamentos`,
+    equip,
+    `👷 Equipe`,
+    equipe,
+    `📦 Materiais`,
+    mats,
+    `Mensagem:`,
+    msgExec,
+    `⚠️ Segurança em primeiro lugar 🚧`,
+    `Organização e disciplina na execução dos serviços.`,
+    `🦺 DDS Diário`,
+    `Tema: ${dds}`,
+    `Grupo MEGA`
+  ].filter(Boolean).join('\n\n');
+}
+
+function montarMensagemCampo() {
+  if (!document.getElementById('dds').value.trim()) gerarDDS();
+
+  const obra = document.getElementById('obra').value.trim();
+  const coordenador = document.getElementById('coordenador').value.trim();
+  const dataAtual = document.getElementById('dataAtual').value.trim();
+  const dataFim = document.getElementById('dataFim').value.trim();
+  const msgExec = document.getElementById('msgExec').value.trim();
+  const dds = document.getElementById('dds').value.trim();
+
+  const equipe = listarTabela('#equipe', ['.eqp-status', '.eqp-nome', '.eqp-funcao'], v => (v[1] || v[2]) ? `${v[0]} ${v[1]}${v[2] ? ' - ' + v[2] : ''}` : '');
+  const servs = listarServicosResumido();
+  const equip = listarTabela('#equipamentos', ['.eq-desc', '.eq-status'], v => v[0] ? `• ${v[0]}${v[1] ? ' (' + v[1] + ')' : ''}` : '');
+
+  return [
+    `📢 PROGRAMAÇÃO – ${obra}`,
+    `📅 ${dataAtual}`,
+    `🏁 Término previsto: ${dataFim}`,
+    `Coordenador: ${coordenador}`,
+    `🛠️ Serviços`,
+    servs,
+    `🚚 Equipamentos`,
+    equip,
+    `👷 Equipe`,
+    equipe,
+    `Mensagem:`,
+    msgExec,
+    `⚠️ Segurança em primeiro lugar 🚧`,
+    `🦺 DDS: ${dds}`,
+    `Grupo MEGA`
+  ].filter(Boolean).join('\n\n');
+}
+
+function gerarMensagens() {
+  document.getElementById('outCCO').textContent = montarMensagemCCO();
+  document.getElementById('outCampo').textContent = montarMensagemCampo();
+  document.getElementById('status').textContent = 'Mensagens geradas com sucesso.';
+}
+
+function copiarTexto(texto) {
+  navigator.clipboard.writeText(texto || '');
+}
+
+function copiarCCO() {
+  const texto = montarMensagemCCO();
+  document.getElementById('outCCO').textContent = texto;
+  copiarTexto(texto);
+  document.getElementById('status').textContent = 'Mensagem CCO copiada.';
+}
+
+function copiarCampo() {
+  const texto = montarMensagemCampo();
+  document.getElementById('outCampo').textContent = texto;
+  copiarTexto(texto);
+  document.getElementById('status').textContent = 'Mensagem de campo copiada.';
+}
+
+function abrirZap(numero, texto) {
+  const limpo = (numero || '').replace(/\D/g, '');
+  const url = limpo ? `https://wa.me/${limpo}?text=${encodeURIComponent(texto)}` : `https://wa.me/?text=${encodeURIComponent(texto)}`;
+  window.open(url, '_blank');
+}
+
+function zapCCO() {
+  const texto = montarMensagemCCO();
+  document.getElementById('outCCO').textContent = texto;
+  abrirZap(document.getElementById('numeroCCO').value, texto);
+  document.getElementById('status').textContent = 'WhatsApp CCO aberto.';
+}
+
+function zapCampo() {
+  const texto = montarMensagemCampo();
+  document.getElementById('outCampo').textContent = texto;
+  abrirZap(document.getElementById('numeroCampo').value, texto);
+  document.getElementById('status').textContent = 'WhatsApp campo aberto.';
+}
+
+function restaurarPadrao() {
+  document.getElementById('obra').value = 'OBRA RIO';
+  document.getElementById('coordenador').value = 'Valério';
+  document.getElementById('dataAtual').value = hojeBR();
+  document.getElementById('dataFim').value = '';
+  document.getElementById('demanda').value = '';
+  document.getElementById('msgExec').value = 'A equipe ficará responsável pela execução da sinalização da frente de obra, garantindo organização, produtividade e segurança da operação.';
+  document.getElementById('numeroCCO').value = '';
+  document.getElementById('numeroCampo').value = '';
+  document.getElementById('dds').value = '';
+  document.querySelector('#servicos tbody').innerHTML = '';
+  document.querySelector('#equipamentos tbody').innerHTML = '';
+  document.querySelector('#equipe tbody').innerHTML = '';
+  document.querySelector('#materiais tbody').innerHTML = '';
+  servicosPadrao.forEach(addServico);
+  equipamentosPadrao.forEach(addEquip);
+  equipePadrao.forEach(addEquipe);
+  materiaisPadrao.forEach(addMaterial);
+  gerarDDS();
+  atualizarAnalise();
+  gerarMensagens();
+  document.getElementById('status').textContent = 'Padrão restaurado.';
+}
+
+document.addEventListener('input', (e) => {
+  if (e.target.closest('#servicos') || e.target.id === 'dataAtual' || e.target.id === 'dataFim') {
+    atualizarAnalise();
+  }
+});
+
+restaurarPadrao();
+</script>
+</body>
+</html>

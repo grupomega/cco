@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mensagem de Contratação</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f6f8;
+      color: #1f2937;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .header {
+      background: #111827;
+      color: #fff;
+      padding: 20px 24px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+    .header p {
+      margin: 8px 0 0;
+      color: #d1d5db;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+    .panel {
+      background: #fff;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+    }
+    .panel h2 {
+      margin: 0 0 16px;
+      font-size: 20px;
+      color: #111827;
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 10px;
+    }
+    .field {
+      margin-bottom: 12px;
+    }
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #374151;
+      text-transform: uppercase;
+    }
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 14px;
+      background: #fff;
+    }
+    .field textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .primary { background: #111827; color: #fff; }
+    .secondary { background: #2563eb; color: #fff; }
+    .light { background: #e5e7eb; color: #111827; }
+    .success { background: #059669; color: white; }
+    .preview {
+      white-space: pre-wrap;
+      line-height: 1.7;
+      font-size: 15px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 18px;
+      min-height: 720px;
+    }
+    .tag {
+      display: inline-block;
+      padding: 4px 8px;
+      background: #eef2ff;
+      color: #3730a3;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    @media (max-width: 1024px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Mensagem Padrão de Contratação</h1>
+      <p>Preencha os dados do novo colaborador e gere a mensagem padronizada para envio.</p>
+    </div>
+
+    <div class="grid">
+      <div class="panel">
+        <h2>Preenchimento</h2>
+
+        
+
+        <div class="field">
+          <label>Nome de referência</label>
+          <input id="nomeCurto" value="Rafael" />
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label>Cargo resumido</label>
+            <input id="cargoResumido" value="auxiliar segurança" />
+          </div>
+          <div class="field">
+            <label>Cidade/UF de residência</label>
+            <input id="residenciaResumo" value="Varginha MG" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Nome completo</label>
+          <input id="nomeCompleto" value="Rafael Alexandre de Souza" />
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label>Cargo oficial</label>
+            <input id="cargoOficial" value="auxiliar de segurança" />
+          </div>
+          <div class="field">
+            <label>Local de trabalho</label>
+            <input id="localTrabalho" value="a definir" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label>Disponibilidade de viagem</label>
+            <input id="viagem" value="total" />
+          </div>
+          <div class="field">
+            <label>Alojamento</label>
+            <input id="alojamento" value="Sim" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Carteira de motorista (CNH)</label>
+          <select id="cnh">
+            <option value="A">A</option>
+            <option value="B" selected>B</option>
+            <option value="AB">AB</option>
+            <option value="D">D</option>
+            <option value="E">E</option>
+            <option value="Não possui">Não possui</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Experiência / atividades (uma por linha)</label>
+          <textarea id="experiencia">Pintura manual
+Pintura mecânica
+Experiência com máquina Airless
+Leitura e interpretação de projetos
+Operação de máquinas de pintura
+Normas de trânsito para sinalização horizontal
+Normas de instalação de placas
+Defensa metálica
+Instalação de TAE
+Instalação de placas
+Aplicação de tachinhas
+Distribuição de cones
+Suporte total nas obras
+Carregamento e descarregamento
+Apoio a motoristas</textarea>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label>Salário</label>
+            <input id="salario" value="R$ 4.000,00" />
+          </div>
+          <div class="field">
+            <label>Adicional / observação salarial</label>
+            <input id="adicional" value="Tem horas extras" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Benefícios e condições (uma por linha)</label>
+          <textarea id="beneficios">HORAS EXTRAS
+RESIDÊNCIA EM VGA
+Alimentação pela empresa seguindo as regras de utilização.</textarea>
+        </div>
+
+        <div class="field">
+          <label>Baixada para casa</label>
+          <textarea id="baixada">60 dias em obra - 5 dias em casa
+Combinar com gerente e o engenheiro local
+A liberação é somente feita pelo Engenheiro de Obras</textarea>
+        </div>
+
+        <div class="actions">
+          <button class="primary" onclick="gerarMensagem()">Gerar mensagem</button>
+          <button class="secondary" onclick="copiarMensagem()">Copiar texto</button>
+          <button class="success" onclick="baixarTxt()">Baixar .txt</button>
+          <button class="light" onclick="limparCampos()">Limpar</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="tag">Pré-visualização</div>
+        <div id="preview" class="preview"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function listaComEmoji(texto, emoji = '•') {
+      return texto
+        .split('\n')
+        .map(item => item.trim())
+        .filter(Boolean)
+        .map(item => `${emoji} ${item}`)
+        .join('\n');
+    }
+
+    function gerarMensagem() {
+      
+      const nomeCurto = document.getElementById('nomeCurto').value.trim();
+      const cargoResumido = document.getElementById('cargoResumido').value.trim();
+      const residenciaResumo = document.getElementById('residenciaResumo').value.trim();
+      const nomeCompleto = document.getElementById('nomeCompleto').value.trim();
+      const cargoOficial = document.getElementById('cargoOficial').value.trim();
+      const localTrabalho = document.getElementById('localTrabalho').value.trim();
+      const viagem = document.getElementById('viagem').value.trim();
+      const alojamento = document.getElementById('alojamento').value.trim();
+      const cnh = document.getElementById('cnh').value.trim();
+      const experiencia = document.getElementById('experiencia').value.trim();
+      const salario = document.getElementById('salario').value.trim();
+      const adicional = document.getElementById('adicional').value.trim();
+      const beneficios = document.getElementById('beneficios').value.trim();
+      const baixada = document.getElementById('baixada').value.trim();
+
+      const mensagem = `INFORMAÇÕES SOBRE CONTRATAÇÃO
+NOVO COLABORADOR
+
+${nomeCurto}\n${cargoResumido}\n\nResidente em ${residenciaResumo}\n\nLocal de Trabalho: ${localTrabalho}\nDisponibilidade de Viagem: ${viagem}
+Ficar em Alojamento: ${alojamento}
+Carteira de Motorista: ${cnh}
+
+${nomeCompleto}\n${cargoOficial}\n\nResidente em ${residenciaResumo}\n\nLocal de Trabalho: ${localTrabalho}\nDisponibilidade de Viagem: ${viagem}
+Ficar em Alojamento: ${alojamento}
+Carteira de Motorista: ${cnh}
+
+🚚\nEXPERIÊNCIA:\n${listaComEmoji(experiencia)}\n\n📌 SALÁRIOS\n${salario}\n${adicional}\n\n✅ ${beneficios.split('\n').map(i => i.trim()).filter(Boolean).join('\n✅ ')}\n\n🧭 BAIXADA PARA CASA\n${baixada}`;
+
+      document.getElementById('preview').textContent = mensagem;
+    }
+
+    function copiarMensagem() {
+      const texto = document.getElementById('preview').textContent;
+      if (!texto.trim()) {
+        gerarMensagem();
+      }
+      navigator.clipboard.writeText(document.getElementById('preview').textContent)
+        .then(() => alert('Mensagem copiada com sucesso.'));
+    }
+
+    function baixarTxt() {
+      const texto = document.getElementById('preview').textContent;
+      if (!texto.trim()) {
+        gerarMensagem();
+      }
+      const blob = new Blob([document.getElementById('preview').textContent], { type: 'text/plain;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'mensagem-contratacao.txt';
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
+    function limparCampos() {
+      document.querySelectorAll('input, textarea').forEach(el => el.value = '');
+      document.getElementById('preview').textContent = '';
+    }
+
+    gerarMensagem();
+  </script>
+</body>
+</html>
