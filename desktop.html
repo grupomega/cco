@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>GRUPO MEGA · Sistema de Ordens de Serviço (Desktop)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --mega-laranja:#E8520A; --mega-laranja-cl:#F4885A; --mega-laranja-bg:#FFF3EE;
+  --mega-cinza-esc:#1E1E1E; --mega-cinza-med:#3A3A3A; --mega-cinza-sub:#5A5A5A;
+  --mega-cinza-bdr:#D0D0D0; --mega-cinza-bg:#F5F5F5; --mega-branco:#FFFFFF;
+  --mega-verde:#1A7A3C; --mega-verde-cl:#D4EDDA;
+  --mega-vermelho:#C0392B; --mega-vermelho-cl:#FADBD8;
+  --mega-amarelo:#D4890A; --mega-amarelo-cl:#FEF3CD;
+  --mega-azul:#1A4A6E; --mega-azul-cl:#D1E8F5;
+  --font-display:'Barlow Condensed',sans-serif; --font-body:'DM Sans',sans-serif; --font-mono:'JetBrains Mono',monospace;
+  --radius-sm:4px; --radius-md:8px; --radius-lg:16px;
+  --shadow-card:0 2px 8px rgba(0,0,0,.10); --shadow-deep:0 8px 32px rgba(0,0,0,.22);
+}
+*{box-sizing:border-box;}
+body{margin:0;font-family:var(--font-body);background:var(--mega-cinza-bg);color:var(--mega-cinza-esc);}
+h1,h2,h3,.disp{font-family:var(--font-display);}
+button{font-family:var(--font-body);cursor:pointer;}
+input,select,textarea{font-family:var(--font-body);}
+.mono{font-family:var(--font-mono);}
+a.applink{color:#aaa;font-size:12px;text-decoration:underline;}
+
+.app-header{background:var(--mega-cinza-esc);border-bottom:3px solid var(--mega-laranja);
+  padding:12px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;
+  position:sticky;top:0;z-index:50;}
+.app-header .brand{font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--mega-laranja);letter-spacing:2px;}
+.app-header .sub{font-family:var(--font-display);font-size:12px;color:#999;letter-spacing:1.5px;margin-left:10px;}
+.app-header .user-box{display:flex;align-items:center;gap:10px;color:#eee;font-size:13px;}
+.app-header .user-box b{color:#fff;}
+.btn-logout{background:transparent;border:1px solid #555;color:#ccc;padding:6px 12px;border-radius:var(--radius-sm);font-size:12px;}
+.btn-logout:hover{border-color:var(--mega-laranja);color:var(--mega-laranja);}
+
+.app-nav{background:#2a2a2a;display:flex;gap:2px;padding:0 20px;overflow-x:auto;position:sticky;top:56px;z-index:49;}
+.app-nav button{background:none;border:none;color:#aaa;padding:12px 18px;font-family:var(--font-display);
+  font-size:13px;letter-spacing:1.5px;text-transform:uppercase;border-bottom:3px solid transparent;white-space:nowrap;}
+.app-nav button.active{color:#fff;border-bottom-color:var(--mega-laranja);}
+.app-nav button:hover{color:#fff;}
+
+.wrap{max-width:1280px;margin:0 auto;padding:20px;}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px;}
+.kpi-card{background:var(--mega-cinza-esc);border-left:4px solid var(--mega-laranja);padding:16px 18px;border-radius:var(--radius-md);}
+.kpi-label{font-family:var(--font-display);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#999;}
+.kpi-value{font-family:var(--font-display);font-size:38px;font-weight:700;color:#fff;line-height:1;margin:6px 0 2px;}
+.kpi-value.small{font-size:26px;}
+.card{background:#fff;border-radius:var(--radius-md);box-shadow:var(--shadow-card);padding:18px 20px;margin-bottom:18px;}
+
+.section-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px;
+  background:var(--mega-cinza-esc);color:#fff;border-left:5px solid var(--mega-laranja);
+  font-family:var(--font-display);font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  border-radius:var(--radius-sm);margin-bottom:14px;flex-wrap:wrap;}
+
+.badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;font-family:var(--font-display);
+  letter-spacing:.8px;text-transform:uppercase;display:inline-block;white-space:nowrap;}
+.badge-ok{background:var(--mega-verde-cl);color:var(--mega-verde);}
+.badge-pendente{background:var(--mega-amarelo-cl);color:var(--mega-amarelo);}
+.badge-critico{background:var(--mega-vermelho-cl);color:var(--mega-vermelho);}
+.badge-andamento{background:var(--mega-azul-cl);color:var(--mega-azul);}
+.badge-concluido{background:#E8E8E8;color:#3A3A3A;}
+
+.btn{border:none;padding:9px 18px;border-radius:var(--radius-sm);font-weight:600;font-size:13px;font-family:var(--font-body);}
+.btn-primary{background:var(--mega-laranja);color:#fff;}
+.btn-primary:hover{background:#c94708;}
+.btn-secondary{background:#fff;color:var(--mega-cinza-esc);border:1px solid var(--mega-cinza-bdr);}
+.btn-secondary:hover{border-color:var(--mega-cinza-esc);}
+.btn-verde{background:var(--mega-verde);color:#fff;}
+.btn-vermelho{background:var(--mega-vermelho);color:#fff;}
+.btn-sm{padding:5px 12px;font-size:12px;}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+.btn-block{width:100%;}
+.btn-icon{width:34px;height:34px;border-radius:var(--radius-sm);border:1px solid var(--mega-cinza-bdr);background:#fff;font-size:15px;}
+.btn-icon.danger{color:var(--mega-vermelho);border-color:var(--mega-vermelho-cl);}
+.btn-icon.danger:hover{background:var(--mega-vermelho-cl);}
+.btn-icon:hover{border-color:var(--mega-cinza-esc);}
+
+.mega-table{width:100%;border-collapse:collapse;font-size:13px;background:#fff;border-radius:var(--radius-md);overflow:hidden;}
+.mega-table thead tr{background:var(--mega-cinza-esc);color:#fff;}
+.mega-table thead th{padding:10px 14px;font-family:var(--font-display);font-size:11px;letter-spacing:1.2px;
+  text-transform:uppercase;text-align:left;}
+.mega-table tbody tr:nth-child(even){background:var(--mega-cinza-bg);}
+.mega-table tbody tr.clickable:hover{background:var(--mega-laranja-bg);cursor:pointer;}
+.mega-table tbody td{padding:9px 14px;border-bottom:1px solid var(--mega-cinza-bdr);}
+.table-scroll{overflow-x:auto;border-radius:var(--radius-md);box-shadow:var(--shadow-card);}
+
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--mega-cinza-sub);}
+.field input,.field select,.field textarea{padding:9px 11px;border:1px solid var(--mega-cinza-bdr);border-radius:var(--radius-sm);font-size:14px;background:#fff;}
+.field textarea{resize:vertical;min-height:70px;}
+.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--mega-laranja-cl);border-color:var(--mega-laranja);}
+.field-span2{grid-column:span 2;}
+.field-span3{grid-column:span 3;}
+@media(max-width:700px){.field-span2,.field-span3{grid-column:span 1;}}
+
+.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--mega-cinza-esc);
+  background-image:repeating-linear-gradient(135deg,#232323 0 2px,#1E1E1E 2px 40px);padding:20px;}
+.login-card{background:#fff;border-radius:var(--radius-lg);padding:36px 32px;width:100%;max-width:420px;box-shadow:var(--shadow-deep);}
+.login-card .brand{text-align:center;font-family:var(--font-display);font-size:30px;font-weight:800;color:var(--mega-laranja);letter-spacing:3px;}
+.login-card .tag{text-align:center;font-size:12px;color:var(--mega-cinza-sub);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:24px;}
+.user-pick{max-height:240px;overflow-y:auto;border:1px solid var(--mega-cinza-bdr);border-radius:var(--radius-sm);margin-bottom:14px;}
+.user-pick .u{padding:10px 12px;border-bottom:1px solid #eee;font-size:14px;display:flex;justify-content:space-between;}
+.user-pick .u:hover{background:var(--mega-laranja-bg);cursor:pointer;}
+.user-pick .u.sel{background:var(--mega-laranja);color:#fff;}
+.err-msg{background:var(--mega-vermelho-cl);color:var(--mega-vermelho);padding:9px 12px;border-radius:var(--radius-sm);font-size:13px;margin-bottom:12px;}
+
+.foto-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;}
+.foto-grid img{width:100%;height:100px;object-fit:cover;border-radius:var(--radius-sm);border:1px solid var(--mega-cinza-bdr);cursor:pointer;}
+.foto-cap{font-size:10px;color:var(--mega-cinza-sub);text-align:center;margin-top:2px;}
+.foto-item{position:relative;}
+.foto-item .del{position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;background:rgba(192,57,43,.9);color:#fff;border:none;font-size:11px;}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:flex;justify-content:flex-end;}
+.modal-panel{background:var(--mega-cinza-bg);width:100%;max-width:760px;height:100%;overflow-y:auto;box-shadow:var(--shadow-deep);}
+.modal-head{background:var(--mega-cinza-esc);color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5;}
+.modal-body{padding:20px;}
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:200;display:flex;align-items:center;justify-content:center;}
+.lightbox img{max-width:92%;max-height:92%;border-radius:var(--radius-sm);}
+
+.timeline{border-left:2px solid var(--mega-cinza-bdr);padding-left:16px;margin-left:6px;}
+.timeline .ev{margin-bottom:14px;position:relative;}
+.timeline .ev::before{content:'';position:absolute;left:-21px;top:4px;width:9px;height:9px;border-radius:50%;background:var(--mega-laranja);}
+.timeline .ev .t{font-size:11px;color:var(--mega-cinza-sub);font-family:var(--font-mono);}
+.timeline .ev .d{font-size:13px;font-weight:600;}
+
+.muted{color:var(--mega-cinza-sub);font-size:13px;}
+.flex-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.divider{height:1px;background:var(--mega-cinza-bdr);margin:16px 0;}
+.empty-state{text-align:center;padding:40px 20px;color:var(--mega-cinza-sub);}
+.crit-critica{border-left:4px solid var(--mega-vermelho) !important;}
+.crit-alta{border-left:4px solid var(--mega-amarelo) !important;}
+.spinner{border:3px solid #eee;border-top:3px solid var(--mega-laranja);border-radius:50%;width:22px;height:22px;animation:spin 0.8s linear infinite;margin:20px auto;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--mega-vermelho);display:inline-block;margin-left:3px;}
+
+#toast-holder{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;z-index:400;pointer-events:none;}
+.toast{background:var(--mega-cinza-esc);color:#fff;padding:12px 22px;border-radius:var(--radius-md);box-shadow:var(--shadow-deep);
+  margin-bottom:20px;font-size:13px;border-left:4px solid var(--mega-laranja);}
+
+.chip-group{display:flex;flex-wrap:wrap;gap:8px;}
+.chip{padding:10px 16px;border-radius:20px;border:2px solid var(--mega-cinza-bdr);background:#fff;font-size:13px;font-weight:600;color:var(--mega-cinza-med);min-height:40px;}
+.chip.sel{background:var(--mega-laranja);border-color:var(--mega-laranja);color:#fff;}
+
+.stepper{display:flex;align-items:center;gap:6px;}
+.stepper button{width:42px;height:42px;border-radius:var(--radius-sm);border:2px solid var(--mega-cinza-bdr);background:#fff;font-size:20px;font-weight:700;color:var(--mega-cinza-esc);}
+.stepper button:active{background:var(--mega-laranja-bg);border-color:var(--mega-laranja);}
+.stepper input{width:76px;height:42px;text-align:center;font-size:16px;font-weight:700;border:2px solid var(--mega-cinza-bdr);border-radius:var(--radius-sm);}
+
+.photo-widget{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;}
+.pw-thumb{position:relative;width:88px;height:88px;}
+.pw-thumb img{width:100%;height:100%;object-fit:cover;border-radius:var(--radius-sm);border:1px solid var(--mega-cinza-bdr);}
+.pw-thumb button{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;background:var(--mega-vermelho);color:#fff;border:none;font-size:12px;}
+.btn-add-photo{width:88px;height:88px;border:2px dashed var(--mega-cinza-bdr);border-radius:var(--radius-sm);background:#fafafa;
+  font-size:24px;color:var(--mega-cinza-sub);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;}
+.btn-add-photo span{font-size:10px;font-weight:700;text-transform:uppercase;}
+
+.item-row{background:#fafafa;border:1px solid var(--mega-cinza-bdr);border-radius:var(--radius-sm);padding:12px;margin-bottom:10px;}
+.item-row-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.perm-check{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;text-transform:none;letter-spacing:0;color:var(--mega-cinza-esc);}
+.perm-check input{width:18px;height:18px;}
+</style>
+</head>
+<body>
+<div id="app">Carregando…</div>
+<div id="toast-holder"></div>
+<script src="app-core.js"></script>
+<script>
+/* ==========================================================
+   RENDER — LOGIN
+   ========================================================== */
+function renderLogin(){
+  if(S.usuariosLogin.length===0 && !S.loading){ loadLoginList().then(render); }
+  const grupos = {};
+  S.usuariosLogin.forEach(u=>{ (grupos[u.perfil]=grupos[u.perfil]||[]).push(u); });
+  return `
+  <div class="login-screen">
+    <div class="login-card">
+      <div class="brand">GRUPO MEGA</div>
+      <div class="tag">Sistema de Ordens de Serviço · Desktop</div>
+      ${S.error?`<div class="err-msg">${esc(S.error)}</div>`:''}
+      <div class="field"><label>Selecione seu nome</label></div>
+      <div class="user-pick">
+        ${Object.keys(grupos).length===0?'<div style="padding:14px;color:#999;">Carregando usuários…</div>':
+          Object.entries(grupos).map(([perfil,us])=>`
+            <div style="background:#f0f0f0;padding:6px 12px;font-family:var(--font-display);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#777;">${PERFIL_LABELS[perfil]}</div>
+            ${us.map(u=>`<div class="u ${S.loginSel===u.id?'sel':''}" onclick="S.loginSel='${u.id}';render()"><span>${esc(u.nome)}</span><span class="muted">${esc(u.cargo||'')}</span></div>`).join('')}
+          `).join('')}
+      </div>
+      <div class="field"><label>PIN de acesso</label>
+        <input type="password" inputmode="numeric" maxlength="6" placeholder="••••" value="${esc(S.pin)}"
+          oninput="S.pin=this.value" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="btn btn-primary btn-block" style="margin-top:14px;" onclick="doLogin()" ${S.loading?'disabled':''}>${S.loading?'Entrando…':'Entrar'}</button>
+      <div class="muted" style="margin-top:14px;text-align:center;">PIN padrão para novos usuários: 1234</div>
+      <div style="text-align:center;margin-top:10px;"><a class="applink" href="./mobile.html">Acessar versão mobile →</a></div>
+    </div>
+  </div>`;
+}
+
+/* ==========================================================
+   RENDER — HEADER / NAV
+   ========================================================== */
+function renderHeader(){
+  const tabs=[];
+  if(canAccess('dashboard')) tabs.push(['dashboard','Dashboard']);
+  if(canAccess('os_lista')) tabs.push(['lista','Ordens de Serviço']);
+  if(canAccess('os_nova')) tabs.push(['nova','Nova OS']);
+  if(canAccess('cadastros_obras')||canAccess('cadastros_equipes')||canAccess('cadastros_usuarios')||canAccess('cadastros_veiculos')||canAccess('cadastros_equipamentos')) tabs.push(['cadastros','Cadastros']);
+  if(canAccess('checklists')) tabs.push(['checklists','Checklists']);
+  if(canAccess('permissoes')) tabs.push(['permissoes','Permissões']);
+  return `
+  <div class="app-header">
+    <div><span class="brand">GRUPO MEGA</span><span class="sub">DESKTOP</span></div>
+    <div class="user-box">
+      <span style="position:relative;cursor:pointer;" onclick="S.showNotif=!S.showNotif;render()">🔔${S.notificacoes.length?`<span class="notif-dot"></span>`:''}</span>
+      <span><b>${esc(S.user.nome)}</b> · ${PERFIL_LABELS[S.user.perfil]}</span>
+      <button class="btn-logout" onclick="doLogout()">Sair</button>
+    </div>
+  </div>
+  ${S.showNotif?renderNotifDropdown():''}
+  <div class="app-nav">
+    ${tabs.map(([k,l])=>`<button class="${S.view===k?'active':''}" onclick="S.view='${k}';${k==='lista'?'loadOSList().then(render);':k==='checklists'?'render();':'render();'}">${l}</button>`).join('')}
+  </div>`;
+}
+function renderNotifDropdown(){
+  return `<div style="position:fixed;top:56px;right:20px;background:#fff;border-radius:var(--radius-md);box-shadow:var(--shadow-deep);
+    width:320px;max-height:400px;overflow-y:auto;z-index:60;">
+    <div style="padding:12px 16px;font-weight:700;border-bottom:1px solid #eee;display:flex;justify-content:space-between;">
+      Notificações ${S.notificacoes.length?`<a style="font-size:12px;color:var(--mega-laranja);cursor:pointer;" onclick="marcarNotificacoesLidas()">Marcar lidas</a>`:''}
+    </div>
+    ${S.notificacoes.length===0?'<div style="padding:16px;color:#999;font-size:13px;">Nenhuma notificação nova.</div>':
+      S.notificacoes.map(n=>`<div style="padding:10px 16px;border-bottom:1px solid #f0f0f0;font-size:13px;">${esc(n.mensagem)}<div class="muted" style="font-size:11px;">${fmtDate(n.criado_em)}</div></div>`).join('')}
+  </div>`;
+}
+
+/* ==========================================================
+   RENDER — DASHBOARD
+   ========================================================== */
+function renderDashboard(){
+  const list = S.osList;
+  const cnt = s => list.filter(o=>o.status===s).length;
+  const abertas = list.filter(o=>['criada','programada','enviada_equipe','visualizada_equipe'].includes(o.status)).length;
+  const emExec = list.filter(o=>['em_deslocamento','em_execucao'].includes(o.status)).length;
+  const criticas = list.filter(o=>o.criticidade==='critica' && !['aprovada','cancelada'].includes(o.status)).length;
+  const atrasadas = list.filter(o=>o.prazo_retorno && new Date(o.prazo_retorno)<new Date() && !['aprovada','cancelada'].includes(o.status)).length;
+  const om=obraMap(), em=equipeMap();
+  const recentes = list.slice(0,10);
+  return `
+  <div class="wrap">
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-label">Total de OS</div><div class="kpi-value">${list.length}</div></div>
+      <div class="kpi-card"><div class="kpi-label">Abertas</div><div class="kpi-value">${abertas}</div></div>
+      <div class="kpi-card"><div class="kpi-label">Em execução</div><div class="kpi-value">${emExec}</div></div>
+      <div class="kpi-card" style="border-left-color:var(--mega-vermelho);"><div class="kpi-label">Críticas</div><div class="kpi-value">${criticas}</div></div>
+      <div class="kpi-card" style="border-left-color:var(--mega-amarelo);"><div class="kpi-label">Atrasadas</div><div class="kpi-value">${atrasadas}</div></div>
+    </div>
+    <div class="section-header">Ordens de Serviço por Status (todos os status)</div>
+    <div class="kpi-grid">
+      ${Object.keys(STATUS_LABELS).map(s=>`<div class="kpi-card" style="border-left-color:${s==='reprovada'||s==='impedida'||s==='cancelada'?'var(--mega-vermelho)':s==='aprovada'?'var(--mega-verde)':'var(--mega-laranja)'};">
+        <div class="kpi-label">${STATUS_LABELS[s]}</div><div class="kpi-value small">${cnt(s)}</div></div>`).join('')}
+    </div>
+    <div class="section-header">Ordens de Serviço Recentes</div>
+    <div class="table-scroll"><table class="mega-table">
+      <thead><tr><th>Nº OS</th><th>Obra</th><th>Equipe</th><th>Serviço</th><th>KM</th><th>Criticidade</th><th>Status</th><th>Criada em</th></tr></thead>
+      <tbody>
+        ${recentes.map(o=>`<tr class="clickable" onclick="abrirOS('${o.id}')">
+          <td class="mono">${o.numero_os}</td><td>${esc(om[o.obra_id]?.nome||'—')}</td><td>${esc(em[o.equipe_id]?.nome||'—')}</td>
+          <td>${esc(o.servico)}</td><td class="mono">${o.km_inicial??'—'} – ${o.km_final??'—'}</td>
+          <td>${critBadge(o.criticidade)}</td><td>${statusBadge(o.status)}</td><td>${fmtDate(o.criado_em)}</td>
+        </tr>`).join('') || `<tr><td colspan="8" class="empty-state">Nenhuma OS cadastrada ainda.</td></tr>`}
+      </tbody>
+    </table></div>
+  </div>`;
+}
+
+/* ==========================================================
+   RENDER — LISTA / NOVA / DETALHE OS
+   ========================================================== */
+function renderLista(){
+  const om=obraMap(), em=equipeMap();
+  let list = [...S.osList];
+  const f = S.osFilters;
+  if(f.obra) list = list.filter(o=>o.obra_id===f.obra);
+  if(f.equipe) list = list.filter(o=>o.equipe_id===f.equipe);
+  if(f.status) list = list.filter(o=>o.status===f.status);
+  if(f.criticidade) list = list.filter(o=>o.criticidade===f.criticidade);
+  if(f.busca) list = list.filter(o=>(o.servico||'').toLowerCase().includes(f.busca.toLowerCase()) || (o.numero_os||'').toLowerCase().includes(f.busca.toLowerCase()));
+  const critOrder={critica:0,alta:1,media:2,baixa:3};
+  if(f.ordenar==='criticidade') list.sort((a,b)=>critOrder[a.criticidade]-critOrder[b.criticidade]);
+  else if(f.ordenar==='km_asc') list.sort((a,b)=>(a.km_inicial??0)-(b.km_inicial??0));
+  else if(f.ordenar==='km_desc') list.sort((a,b)=>(b.km_inicial??0)-(a.km_inicial??0));
+  else if(f.ordenar==='prazo') list.sort((a,b)=>new Date(a.prazo_retorno||9e15)-new Date(b.prazo_retorno||9e15));
+
+  return `
+  <div class="wrap">
+    <div class="section-header">Ordens de Serviço</div>
+    <div class="card">
+      <div class="form-grid">
+        <div class="field"><label>Obra</label><select onchange="S.osFilters.obra=this.value;render()">${opt(S.obras.map(o=>[o.id,o.nome]),f.obra,true)}</select></div>
+        <div class="field"><label>Equipe</label><select onchange="S.osFilters.equipe=this.value;render()">${opt(S.equipes.map(e=>[e.id,e.nome]),f.equipe,true)}</select></div>
+        <div class="field"><label>Status</label><select onchange="S.osFilters.status=this.value;render()">${opt(Object.entries(STATUS_LABELS),f.status,true)}</select></div>
+        <div class="field"><label>Criticidade</label><select onchange="S.osFilters.criticidade=this.value;render()">${opt(CRIT_OPTS,f.criticidade,true)}</select></div>
+        <div class="field"><label>Buscar</label><input placeholder="Nº OS ou serviço" value="${esc(f.busca)}" oninput="S.osFilters.busca=this.value;render()"></div>
+        <div class="field"><label>Ordenar por</label><select onchange="S.osFilters.ordenar=this.value;render()">
+          <option value="criticidade" ${f.ordenar==='criticidade'?'selected':''}>Criticidade</option>
+          <option value="km_asc" ${f.ordenar==='km_asc'?'selected':''}>KM crescente</option>
+          <option value="km_desc" ${f.ordenar==='km_desc'?'selected':''}>KM decrescente</option>
+          <option value="prazo" ${f.ordenar==='prazo'?'selected':''}>Prazo</option>
+        </select></div>
+      </div>
+    </div>
+    <div class="table-scroll"><table class="mega-table">
+      <thead><tr><th>Nº OS</th><th>Obra</th><th>Equipe</th><th>Serviço</th><th>Pista/Sentido</th><th>KM</th><th>Criticidade</th><th>Status</th><th>Prazo</th></tr></thead>
+      <tbody>
+        ${list.map(o=>{
+          const atrasada = o.prazo_retorno && new Date(o.prazo_retorno)<new Date() && !['aprovada','cancelada'].includes(o.status);
+          return `<tr class="clickable ${o.criticidade==='critica'?'crit-critica':o.criticidade==='alta'?'crit-alta':''}" onclick="abrirOS('${o.id}')">
+          <td class="mono">${o.numero_os}</td><td>${esc(om[o.obra_id]?.nome||'—')}</td><td>${esc(em[o.equipe_id]?.nome||'—')}</td>
+          <td>${esc(o.servico)}</td><td>${PISTA_OPTS.find(p=>p[0]===o.pista)?.[1]||'—'} / ${SENTIDO_OPTS.find(s=>s[0]===o.sentido)?.[1]||'—'}</td>
+          <td class="mono">${o.km_inicial??'—'}–${o.km_final??'—'}</td>
+          <td>${critBadge(o.criticidade)}</td><td>${statusBadge(o.status)}</td>
+          <td>${atrasada?badge('critico','Atrasada'):fmtDateOnly(o.prazo_retorno)}</td>
+        </tr>`}).join('') || `<tr><td colspan="9" class="empty-state">Nenhuma OS encontrada com os filtros atuais.</td></tr>`}
+      </tbody>
+    </table></div>
+  </div>`;
+}
+
+function renderNovaOS(){
+  return `
+  <div class="wrap">
+    <div class="section-header">Nova Ordem de Serviço</div>
+    <form class="card" onsubmit="event.preventDefault();criarOS(this);">
+      <div class="form-grid">
+        <div class="field"><label>Obra *</label><select name="obra_id" required>${opt(S.obras.map(o=>[o.id,o.nome]),'',true)}</select></div>
+        <div class="field"><label>Equipe responsável</label><select name="equipe_id">${opt(S.equipes.map(e=>[e.id,e.nome]),'',true)}</select></div>
+        <div class="field"><label>Contrato</label><input name="contrato" placeholder="Ex: CT-0001/2026"></div>
+        <div class="field"><label>Data prevista</label><input type="date" name="data_programada"></div>
+        <div class="field"><label>Prazo para retorno</label><input type="datetime-local" name="prazo_retorno"></div>
+        <div class="field field-span2"><label>Criticidade *</label>${chipGroup('criticidade',CRIT_OPTS,'media')}</div>
+        <div class="field field-span3"><label>Pista</label>${chipGroup('pista',PISTA_OPTS,'')}</div>
+        <div class="field field-span2"><label>Sentido</label>${chipGroup('sentido',SENTIDO_OPTS,'')}</div>
+        <div class="field"><label>Faixa</label>${chipGroup('faixa',FAIXA_OPTS,'')}</div>
+        <div class="field"><label>KM inicial</label>${stepperField('km_inicial',0,0.1,0,1)}</div>
+        <div class="field"><label>KM final</label>${stepperField('km_final',0,0.1,0,1)}</div>
+        <div class="field field-span3"><label>Descrição detalhada</label><textarea name="descricao"></textarea></div>
+        <div class="field field-span3"><label>Observações</label><textarea name="observacoes"></textarea></div>
+      </div>
+      <div class="divider"></div>
+      <div class="section-header" style="margin-bottom:10px;">Itens de Serviço / Metas de Produção</div>
+      <div id="itens-container"></div>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="addItemRow('itens-container')">+ Adicionar item</button>
+      <div class="divider"></div>
+      <div class="field"><label>Fotos antes da execução</label>${photoWidget('antes_nova')}</div>
+      <div class="divider"></div>
+      <div class="flex-row">
+        <button class="btn btn-primary" ${S.loading?'disabled':''}>${S.loading?'Salvando…':'Criar Ordem de Serviço'}</button>
+        <button type="button" class="btn btn-secondary" onclick="clearPending('antes_nova');S.view='lista';loadOSList().then(render);">Cancelar</button>
+      </div>
+    </form>
+  </div>`;
+}
+
+function renderDetalheOS(){
+  const o = S.currentOS;
+  if(!o) return `<div class="wrap"><div class="empty-state">OS não encontrada.</div></div>`;
+  const om=obraMap(), em=equipeMap(), um=usuMap();
+  const isEquipeUser = S.user.perfil==='equipe';
+  const isEscritorio = ['administrador','escritorio','coordenador'].includes(S.user.perfil);
+  const fotosPorTipo = t => S.currentFotos.filter(f=>f.tipo_foto===t);
+
+  if(S.editingOS){
+    return `<div class="modal-overlay" onclick="if(event.target===this){S.editingOS=false;render();}"><div class="modal-panel">
+      <div class="modal-head"><div style="font-family:var(--font-display);font-size:20px;">Editar ${o.numero_os}</div>
+        <button class="btn-logout" onclick="S.editingOS=false;render()">✕ Fechar</button></div>
+      <div class="modal-body">
+        <form class="card" onsubmit="event.preventDefault();salvarEdicaoOS(this);">
+          <div class="form-grid">
+            <div class="field"><label>Obra *</label><select name="obra_id" required>${opt(S.obras.map(x=>[x.id,x.nome]),o.obra_id)}</select></div>
+            <div class="field"><label>Equipe</label><select name="equipe_id">${opt(S.equipes.map(x=>[x.id,x.nome]),o.equipe_id,true)}</select></div>
+            <div class="field"><label>Contrato</label><input name="contrato" value="${esc(o.contrato||'')}"></div>
+            <div class="field"><label>Data prevista</label><input type="date" name="data_programada" value="${o.data_programada||''}"></div>
+            <div class="field"><label>Prazo para retorno</label><input type="datetime-local" name="prazo_retorno" value="${o.prazo_retorno? o.prazo_retorno.slice(0,16):''}"></div>
+            <div class="field field-span2"><label>Criticidade</label>${chipGroup('criticidade',CRIT_OPTS,o.criticidade)}</div>
+            <div class="field field-span3"><label>Pista</label>${chipGroup('pista',PISTA_OPTS,o.pista)}</div>
+            <div class="field field-span2"><label>Sentido</label>${chipGroup('sentido',SENTIDO_OPTS,o.sentido)}</div>
+            <div class="field"><label>Faixa</label>${chipGroup('faixa',FAIXA_OPTS,o.faixa)}</div>
+            <div class="field"><label>KM inicial</label>${stepperField('km_inicial',o.km_inicial||0,0.1,0,1)}</div>
+            <div class="field"><label>KM final</label>${stepperField('km_final',o.km_final||0,0.1,0,1)}</div>
+            <div class="field field-span3"><label>Descrição</label><textarea name="descricao">${esc(o.descricao||'')}</textarea></div>
+            <div class="field field-span3"><label>Observações</label><textarea name="observacoes">${esc(o.observacoes||'')}</textarea></div>
+          </div>
+          <div class="divider"></div>
+          <div class="flex-row"><button class="btn btn-primary" ${S.loading?'disabled':''}>${S.loading?'Salvando…':'Salvar alterações'}</button>
+          <button type="button" class="btn btn-secondary" onclick="S.editingOS=false;render()">Cancelar</button></div>
+        </form>
+      </div>
+    </div></div>`;
+  }
+
+  let acoes = '';
+  if(isEscritorio && ['criada','programada'].includes(o.status)) acoes += `<button class="btn btn-primary" onclick="enviarParaEquipe('${o.id}')">Enviar para equipe</button>`;
+  if(isEquipeUser && o.equipe_id===S.user.equipe_id){
+    if(['enviada_equipe','criada','programada'].includes(o.status)) acoes += `<button class="btn btn-secondary" onclick="confirmarRecebimento('${o.id}')">Confirmar recebimento</button>`;
+    if(['visualizada_equipe','enviada_equipe','criada','programada','correcao_solicitada'].includes(o.status)) acoes += `<button class="btn btn-primary" onclick="iniciarExecucao('${o.id}')">Iniciar execução</button>`;
+    if(o.status==='impedida') acoes += `<button class="btn btn-primary" onclick="retomarExecucao('${o.id}')">Retomar execução</button>`;
+  }
+  if(isEscritorio && o.status==='enviada_conferencia') acoes += `<button class="btn btn-verde" onclick="aprovarOS('${o.id}')">Aprovar</button>`;
+  if(isEscritorio) acoes += `<button class="btn btn-secondary" onclick="toggleEditarOS()">✏️ Editar OS</button><button class="btn btn-vermelho" onclick="excluirOS('${o.id}')">🗑 Excluir OS</button>`;
+
+  return `
+  <div class="modal-overlay" onclick="if(event.target===this)fecharOS()">
+  <div class="modal-panel">
+    <div class="modal-head">
+      <div><div style="font-family:var(--font-display);font-size:20px;font-weight:700;">${o.numero_os}</div>
+      <div style="font-size:12px;color:#aaa;">${esc(om[o.obra_id]?.nome||'')}</div></div>
+      <button class="btn-logout" onclick="fecharOS()">✕ Fechar</button>
+    </div>
+    <div class="modal-body">
+      <div class="flex-row" style="margin-bottom:14px;">${statusBadge(o.status)}${critBadge(o.criticidade)}</div>
+      <div class="card">
+        <div class="form-grid" style="font-size:13px;">
+          <div><b>Equipe:</b> ${esc(em[o.equipe_id]?.nome||'—')}</div>
+          <div><b>Pista/Sentido/Faixa:</b> ${PISTA_OPTS.find(p=>p[0]===o.pista)?.[1]||'—'} · ${SENTIDO_OPTS.find(s=>s[0]===o.sentido)?.[1]||'—'} · ${FAIXA_OPTS.find(f=>f[0]===o.faixa)?.[1]||'—'}</div>
+          <div><b>KM:</b> ${o.km_inicial??'—'} a ${o.km_final??'—'}</div>
+          <div><b>Contrato:</b> ${esc(o.contrato||'—')}</div>
+          <div><b>Criado por:</b> ${esc(um[o.responsavel_criacao_id]?.nome||'—')}</div>
+          <div><b>Data programada:</b> ${fmtDateOnly(o.data_programada)}</div>
+          <div><b>Prazo de retorno:</b> ${fmtDate(o.prazo_retorno)}</div>
+        </div>
+        ${o.descricao?`<div class="divider"></div><div><b>Descrição:</b> ${esc(o.descricao)}</div>`:''}
+        ${o.observacoes?`<div style="margin-top:6px;"><b>Observações:</b> ${esc(o.observacoes)}</div>`:''}
+      </div>
+
+      ${acoes?`<div class="card flex-row">${acoes}</div>`:''}
+
+      <div class="section-header">Itens / Metas de Produção</div>
+      <div class="card">
+        <div class="table-scroll"><table class="mega-table">
+          <thead><tr><th>Serviço</th><th>Unidade</th><th>Meta prevista</th><th>Observação</th>${isEscritorio?'<th></th>':''}</tr></thead>
+          <tbody>${S.currentItens.map(it=>`<tr><td>${esc(it.servico)}</td><td>${esc(it.unidade||'—')}</td><td class="mono">${it.quantidade_prevista??'—'}</td><td>${esc(it.observacao||'')}</td>
+            ${isEscritorio?`<td><button class="btn-icon danger" onclick="excluirItemOS('${it.id}')">🗑</button></td>`:''}</tr>`).join('') || `<tr><td colspan="5" class="empty-state">Nenhum item cadastrado.</td></tr>`}
+          </tbody></table></div>
+        ${isEscritorio?`
+        <div class="divider"></div>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="S.showAddItem=!S.showAddItem;render()">${S.showAddItem?'Cancelar':'+ Adicionar item'}</button>
+        ${S.showAddItem?`<form onsubmit="event.preventDefault();adicionarItemOS(this);" style="margin-top:12px;">
+          <div class="form-grid">
+            <div class="field field-span2"><label>Serviço</label>${chipGroup('servico', SERVICO_SUGESTOES.map(s=>[s,s]), '')}</div>
+            <div class="field"><label>Unidade</label>${chipGroup('unidade', UNIDADE_OPTS, '')}</div>
+            <div class="field"><label>Meta</label>${stepperField('meta',0,1,0,1)}</div>
+            <div class="field field-span3"><label>Observação</label><input name="obs"></div>
+          </div>
+          <button class="btn btn-primary btn-sm" style="margin-top:10px;">Salvar item</button>
+        </form>`:''}`:''}
+      </div>
+
+      ${isEquipeUser && o.equipe_id===S.user.equipe_id && ['em_execucao','em_deslocamento','pausada','aguardando_material','aguardando_equipamento','aguardando_liberacao_pista'].includes(o.status) ? renderFormExecucao(o) : ''}
+      ${isEscritorio && o.status==='enviada_conferencia' ? renderFormConferencia() : ''}
+
+      <div class="section-header">Fotos</div>
+      <div class="card">
+        ${['antes','durante','depois','evidencia_medicao','impedimento','correcao'].map(t=>{
+          const fs = fotosPorTipo(t); if(fs.length===0) return '';
+          return `<div style="margin-bottom:12px;"><div class="muted" style="text-transform:uppercase;font-weight:700;font-size:11px;margin-bottom:6px;">${t.replace('_',' ')}</div>
+          <div class="foto-grid">${fs.map(f=>`<div class="foto-item"><img src="${f.arquivo_url}" onclick="S.lightboxUrl='${f.arquivo_url}';render()">
+          ${isEscritorio?`<button class="del" onclick="event.stopPropagation();excluirFoto('${f.id}')">✕</button>`:''}
+          <div class="foto-cap">${fmtDate(f.data_hora)}</div></div>`).join('')}</div></div>`;
+        }).join('') || '<div class="muted">Nenhuma foto registrada.</div>'}
+      </div>
+
+      ${S.currentMedicoes.length?`<div class="section-header">Medição</div><div class="card table-scroll"><table class="mega-table">
+        <thead><tr><th>Item</th><th>Unid.</th><th>Prevista</th><th>Executada</th><th>Aprovada</th>${isEscritorio?'<th></th>':''}</tr></thead>
+        <tbody>${S.currentMedicoes.map(m=>`<tr><td>${esc(m.item||'')}</td><td>${esc(m.unidade||'')}</td><td>${m.quantidade_prevista??'—'}</td>
+          <td>${m.quantidade_executada??'—'}</td><td>${m.quantidade_aprovada??'—'}</td>
+          ${isEscritorio?`<td><button class="btn-icon danger" onclick="excluirMedicao('${m.id}')">🗑</button></td>`:''}</tr>`).join('')}
+        </tbody></table></div>`:''}
+
+      ${S.currentImpedimentos.length?`<div class="section-header">Impedimentos</div><div class="card">
+        ${S.currentImpedimentos.map(i=>`<div style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:flex-start;">
+          <div><b>${esc(i.motivo)}</b> — ${fmtDate(i.data_hora)}<br><span class="muted">${esc(i.descricao||'')}</span></div>
+          ${isEscritorio?`<button class="btn-icon danger" onclick="excluirImpedimento('${i.id}')">🗑</button>`:''}</div>`).join('')}
+      </div>`:''}
+
+      <div class="section-header">Histórico de status</div>
+      <div class="card"><div class="timeline">
+        ${S.currentHistorico.map(h=>`<div class="ev"><div class="t">${fmtDate(h.data_hora)}</div>
+          <div class="d">${h.status_anterior?STATUS_LABELS[h.status_anterior]+' → ':''}${STATUS_LABELS[h.status_novo]}</div>
+          ${h.justificativa?`<div class="muted">${esc(h.justificativa)}</div>`:''}</div>`).join('') || '<div class="muted">Sem histórico.</div>'}
+      </div></div>
+
+      <div class="section-header">Comentários</div>
+      <div class="card">
+        <form onsubmit="event.preventDefault();enviarComentario(this);" class="flex-row">
+          <input name="comentario" placeholder="Adicionar comentário…" style="flex:1;padding:9px 11px;border:1px solid var(--mega-cinza-bdr);border-radius:var(--radius-sm);">
+          <button class="btn btn-secondary">Enviar</button>
+        </form>
+        <div class="divider"></div>
+        ${S.currentComentarios.map(c=>`<div style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:flex-start;">
+          <div><b>${esc(um[c.usuario_id]?.nome||'Usuário')}</b><span class="muted"> · ${fmtDate(c.data_hora)}</span><br>${esc(c.comentario)}</div>
+          ${isEscritorio?`<button class="btn-icon danger" onclick="excluirComentario('${c.id}')">🗑</button>`:''}</div>`).join('') || '<div class="muted">Nenhum comentário ainda.</div>'}
+      </div>
+    </div>
+  </div>
+  </div>
+  ${S.lightboxUrl?`<div class="lightbox" onclick="S.lightboxUrl=null;render()"><img src="${S.lightboxUrl}"></div>`:''}
+  `;
+}
+
+function renderFormExecucao(o){
+  return `
+  <div class="section-header">Retorno da Execução</div>
+  <div class="card">
+    <form onsubmit="event.preventDefault();finalizarAtividade(this);">
+      <div style="margin-bottom:14px;">
+        <label style="font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--mega-cinza-sub);">Quantidade executada por item (toque para ajustar)</label>
+        ${S.currentItens.map(it=>`<div class="item-row"><b>${esc(it.servico)}</b> <span class="muted">(${esc(it.unidade||'')}) — meta: ${it.quantidade_prevista??'—'}</span>
+          <div style="margin-top:8px;">${stepperField('exec_item_'+it.id, it.quantidade_prevista||0, 1, 0, 1)}</div></div>`).join('') || '<div class="muted">Nenhum item cadastrado para esta OS.</div>'}
+      </div>
+      <div class="form-grid">
+        <div class="field"><label>Data execução</label><input type="date" name="data_execucao" value="${new Date().toISOString().slice(0,10)}"></div>
+        <div class="field"><label>Hora início</label><input type="datetime-local" name="hora_inicio"></div>
+        <div class="field"><label>KM inicial executado</label>${stepperField('km_inicial_executado', o.km_inicial||0, 0.1,0,1)}</div>
+        <div class="field"><label>KM final executado</label>${stepperField('km_final_executado', o.km_final||0, 0.1,0,1)}</div>
+        <div class="field"><label>Nº de colaboradores</label>${stepperField('numero_colaboradores',1,1,0,0)}</div>
+        <div class="field field-span2"><label>Condição climática</label>${chipGroup('condicao_climatica', CLIMA_OPTS.map(c=>[c,c]), '')}</div>
+        <div class="field field-span3"><label>Materiais utilizados</label>${chipMultiGroup('materiais_utilizados', MATERIAIS_PRESET, [])}</div>
+        <div class="field field-span3"><label>Equipamentos utilizados</label>${chipMultiGroup('equipamentos_utilizados', EQUIPAMENTOS_PRESET, [])}</div>
+        <div class="field field-span3"><label>Informações adicionais (opcional)</label><textarea name="informacoes_adicionais"></textarea></div>
+        <div class="field field-span3"><label>Observações (opcional)</label><textarea name="observacoes_retorno"></textarea></div>
+        <div class="field field-span3"><label>Fotos da execução (depois) *</label>${photoWidget('depois_'+o.id)}</div>
+      </div>
+      <div class="divider"></div>
+      <button class="btn btn-verde" ${S.loading?'disabled':''}>${S.loading?'Enviando…':'Finalizar atividade e enviar para conferência'}</button>
+    </form>
+  </div>
+  <div class="section-header">Registrar Impedimento</div>
+  <div class="card">
+    <form onsubmit="event.preventDefault();registrarImpedimento(this);">
+      <div class="field" style="margin-bottom:14px;"><label>Motivo *</label>${chipGroup('motivo', IMPEDIMENTO_MOTIVOS.map(m=>[m,m]), '')}</div>
+      <div class="field" style="margin-bottom:14px;"><label>Descrição (opcional)</label><input name="descricao"></div>
+      <div class="field" style="margin-bottom:14px;"><label>Fotos do impedimento</label>${photoWidget('imped_'+o.id)}</div>
+      <button class="btn btn-vermelho" ${S.loading?'disabled':''}>Registrar impedimento</button>
+    </form>
+  </div>`;
+}
+
+function renderFormConferencia(){
+  return `
+  <div class="section-header">Conferência do Escritório</div>
+  <div class="card">
+    <div class="flex-row" style="margin-bottom:14px;"><button class="btn btn-verde" onclick="aprovarOS('${S.currentOS.id}')">✓ Aprovar serviço</button></div>
+    <div class="divider"></div>
+    <form onsubmit="event.preventDefault();reprovarOS(this);" style="margin-bottom:16px;">
+      <div class="field" style="margin-bottom:10px;"><label>Motivo da reprovação</label>${chipGroup('motivo', REPROVACAO_MOTIVOS.map(m=>[m,m]), '')}</div>
+      <div class="field"><label>Comentário</label><input name="comentario"></div>
+      <button class="btn btn-vermelho" style="margin-top:10px;">Reprovar</button>
+    </form>
+    <form onsubmit="event.preventDefault();solicitarCorrecao(this);">
+      <div class="field"><label>Solicitar correção — comentário</label><input name="comentario" placeholder="O que precisa ser corrigido?"></div>
+      <button class="btn btn-secondary" style="margin-top:10px;">Solicitar correção</button>
+    </form>
+  </div>`;
+}
+
+/* ==========================================================
+   RENDER — CADASTROS (Obras / Equipes / Usuários / Veículos / Equipamentos)
+   ========================================================== */
+function renderCadastros(){
+  const tabs=[];
+  if(canAccess('cadastros_obras')) tabs.push(['obras','Obras']);
+  if(canAccess('cadastros_equipes')) tabs.push(['equipes','Equipes']);
+  if(canAccess('cadastros_usuarios')) tabs.push(['usuarios','Usuários']);
+  if(canAccess('cadastros_veiculos')) tabs.push(['veiculos','Veículos']);
+  if(canAccess('cadastros_equipamentos')) tabs.push(['equipamentos','Equipamentos']);
+  if(!tabs.find(t=>t[0]===S.cadastroTab)) S.cadastroTab = tabs[0]?.[0]||'obras';
+  return `
+  <div class="wrap">
+    <div class="section-header">Cadastros</div>
+    <div class="flex-row" style="margin-bottom:16px;">
+      ${tabs.map(([k,l])=>`<button class="btn ${S.cadastroTab===k?'btn-primary':'btn-secondary'}" onclick="S.cadastroTab='${k}';render()">${l}</button>`).join('')}
+    </div>
+    ${S.cadastroTab==='obras'?renderCadastroObras():''}
+    ${S.cadastroTab==='equipes'?renderCadastroEquipes():''}
+    ${S.cadastroTab==='usuarios'?renderCadastroUsuarios():''}
+    ${S.cadastroTab==='veiculos'?renderCadastroVeiculos():''}
+    ${S.cadastroTab==='equipamentos'?renderCadastroEquipamentos():''}
+  </div>`;
+}
+function renderCadastroObras(){
+  const ed = S.editObra;
+  return `
+  <div class="card">
+    <div class="muted" style="margin-bottom:10px;font-weight:700;">${ed?'Editando obra':'Nova obra'}</div>
+    <form onsubmit="event.preventDefault();${ed?'salvarEdicaoObra(this)':'criarObra(this)'};">
+      <div class="form-grid">
+        <div class="field field-span2"><label>Nome *</label><input name="nome" required value="${esc(ed?.nome||'')}"></div>
+        <div class="field"><label>Cliente</label><input name="cliente" value="${esc(ed?.cliente||'')}"></div>
+        <div class="field"><label>Contrato</label><input name="contrato" value="${esc(ed?.contrato||'')}"></div>
+        <div class="field"><label>Rodovia</label><input name="rodovia" value="${esc(ed?.rodovia||'')}"></div>
+        <div class="field"><label>KM inicial</label><input type="number" step="0.001" name="km_inicial" value="${ed?.km_inicial??''}"></div>
+        <div class="field"><label>KM final</label><input type="number" step="0.001" name="km_final" value="${ed?.km_final??''}"></div>
+        <div class="field"><label>Cidade</label><input name="cidade" value="${esc(ed?.cidade||'')}"></div>
+        <div class="field"><label>Estado</label><input name="estado" maxlength="2" value="${esc(ed?.estado||'')}"></div>
+        <div class="field"><label>Início</label><input type="date" name="data_inicio" value="${ed?.data_inicio||''}"></div>
+        <div class="field"><label>Término previsto</label><input type="date" name="data_prevista_termino" value="${ed?.data_prevista_termino||''}"></div>
+        <div class="field"><label>Status</label><select name="status">
+          <option value="planejada" ${ed?.status==='planejada'?'selected':''}>Planejada</option>
+          <option value="em_andamento" ${ed?.status==='em_andamento'?'selected':''}>Em andamento</option>
+          <option value="paralisada" ${ed?.status==='paralisada'?'selected':''}>Paralisada</option>
+          <option value="concluida" ${ed?.status==='concluida'?'selected':''}>Concluída</option></select></div>
+      </div>
+      <div class="flex-row" style="margin-top:12px;">
+        <button class="btn btn-primary">${ed?'Salvar alterações':'Cadastrar Obra'}</button>
+        ${ed?`<button type="button" class="btn btn-secondary" onclick="cancelarEdicaoObra()">Cancelar</button>`:''}
+      </div>
+    </form>
+  </div>
+  <div class="table-scroll"><table class="mega-table"><thead><tr><th>Nome</th><th>Rodovia</th><th>KM</th><th>Cidade/UF</th><th>Status</th><th></th></tr></thead>
+  <tbody>${S.obras.map(o=>`<tr><td>${esc(o.nome)}</td><td>${esc(o.rodovia||'—')}</td><td class="mono">${o.km_inicial??'—'}-${o.km_final??'—'}</td>
+    <td>${esc(o.cidade||'')}/${esc(o.estado||'')}</td><td>${badge(o.status==='em_andamento'?'andamento':o.status==='concluida'?'concluido':'pendente',o.status)}</td>
+    <td><button class="btn-icon" onclick="iniciarEdicaoObra('${o.id}')">✏️</button> <button class="btn-icon danger" onclick="excluirObra('${o.id}')">🗑</button></td></tr>`).join('')}</tbody></table></div>`;
+}
+function renderCadastroEquipes(){
+  const ed = S.editEquipe;
+  return `
+  <div class="card">
+    <div class="muted" style="margin-bottom:10px;font-weight:700;">${ed?'Editando equipe':'Nova equipe'}</div>
+    <form onsubmit="event.preventDefault();${ed?'salvarEdicaoEquipe(this)':'criarEquipe(this)'};">
+      <div class="form-grid">
+        <div class="field"><label>Nome *</label><input name="nome" required value="${esc(ed?.nome||'')}"></div>
+        <div class="field"><label>Código</label><input name="codigo" value="${esc(ed?.codigo||'')}"></div>
+        <div class="field"><label>Obra</label><select name="obra_id">${opt(S.obras.map(o=>[o.id,o.nome]),ed?.obra_id,true)}</select></div>
+        <div class="field"><label>Encarregado</label><select name="encarregado_id">${opt(S.usuarios.map(u=>[u.id,u.nome]),ed?.encarregado_id,true)}</select></div>
+        <div class="field"><label>Supervisor</label><select name="supervisor_id">${opt(S.usuarios.map(u=>[u.id,u.nome]),ed?.supervisor_id,true)}</select></div>
+        <div class="field"><label>Veículo</label><input name="veiculo" value="${esc(ed?.veiculo||'')}"></div>
+        <div class="field"><label>Equipamento</label><input name="equipamento" value="${esc(ed?.equipamento||'')}"></div>
+        <div class="field"><label>Telefone</label><input name="telefone" value="${esc(ed?.telefone||'')}"></div>
+      </div>
+      <div class="flex-row" style="margin-top:12px;">
+        <button class="btn btn-primary">${ed?'Salvar alterações':'Cadastrar Equipe'}</button>
+        ${ed?`<button type="button" class="btn btn-secondary" onclick="cancelarEdicaoEquipe()">Cancelar</button>`:''}
+      </div>
+    </form>
+  </div>
+  <div class="table-scroll"><table class="mega-table"><thead><tr><th>Nome</th><th>Código</th><th>Encarregado</th><th>Supervisor</th><th>Obra</th><th></th></tr></thead>
+  <tbody>${S.equipes.map(e=>`<tr><td>${esc(e.nome)}</td><td class="mono">${esc(e.codigo||'—')}</td>
+    <td>${esc(usuMap()[e.encarregado_id]?.nome||'—')}</td><td>${esc(usuMap()[e.supervisor_id]?.nome||'—')}</td>
+    <td>${esc(obraMap()[e.obra_id]?.nome||'—')}</td>
+    <td><button class="btn-icon" onclick="iniciarEdicaoEquipe('${e.id}')">✏️</button> <button class="btn-icon danger" onclick="excluirEquipe('${e.id}')">🗑</button></td></tr>`).join('')}</tbody></table></div>`;
+}
+function renderCadastroUsuarios(){
+  const ed = S.editUsuario;
+  return `
+  <div class="card">
+    <div class="muted" style="margin-bottom:10px;font-weight:700;">${ed?'Editando usuário':'Novo usuário'}</div>
+    <form onsubmit="event.preventDefault();${ed?'salvarEdicaoUsuario(this)':'criarUsuario(this)'};">
+      <div class="form-grid">
+        <div class="field"><label>Nome *</label><input name="nome" required value="${esc(ed?.nome||'')}"></div>
+        <div class="field"><label>CPF</label><input name="cpf" value="${esc(ed?.cpf||'')}"></div>
+        <div class="field"><label>Cargo</label><input name="cargo" value="${esc(ed?.cargo||'')}"></div>
+        <div class="field"><label>Perfil *</label><select name="perfil" required>${opt(Object.entries(PERFIL_LABELS),ed?.perfil||'equipe')}</select></div>
+        <div class="field"><label>E-mail</label><input type="email" name="email" value="${esc(ed?.email||'')}"></div>
+        <div class="field"><label>Telefone</label><input name="telefone" value="${esc(ed?.telefone||'')}"></div>
+        <div class="field"><label>Equipe</label><select name="equipe_id">${opt(S.equipes.map(e=>[e.id,e.nome]),ed?.equipe_id,true)}</select></div>
+        <div class="field"><label>Obra</label><select name="obra_id">${opt(S.obras.map(o=>[o.id,o.nome]),ed?.obra_id,true)}</select></div>
+        ${ed?`<div class="field"><label>Status</label><select name="status"><option value="ativo" ${ed.status==='ativo'?'selected':''}>Ativo</option><option value="inativo" ${ed.status==='inativo'?'selected':''}>Inativo</option></select></div>`:''}
+      </div>
+      <div class="flex-row" style="margin-top:12px;">
+        <button class="btn btn-primary">${ed?'Salvar alterações':'Cadastrar Usuário'}</button>
+        ${ed?`<button type="button" class="btn btn-secondary" onclick="cancelarEdicaoUsuario()">Cancelar</button>`:''}
+      </div>
+      ${!ed?'<div class="muted" style="margin-top:8px;">Permissões de acesso são atribuídas automaticamente conforme o perfil e podem ser ajustadas na aba Permissões.</div>':''}
+    </form>
+  </div>
+  <div class="table-scroll"><table class="mega-table"><thead><tr><th>Nome</th><th>Cargo</th><th>Perfil</th><th>Equipe</th><th>Status</th><th></th></tr></thead>
+  <tbody>${S.usuarios.map(u=>`<tr><td>${esc(u.nome)}</td><td>${esc(u.cargo||'—')}</td><td>${PERFIL_LABELS[u.perfil]}</td>
+    <td>${esc(equipeMap()[u.equipe_id]?.nome||'—')}</td><td>${badge(u.status==='ativo'?'ok':'critico',u.status)}</td>
+    <td><button class="btn-icon" onclick="iniciarEdicaoUsuario('${u.id}')">✏️</button> <button class="btn-icon" onclick="redefinirPin('${u.id}')">🔑</button> <button class="btn-icon danger" onclick="excluirUsuario('${u.id}')">🗑</button></td></tr>`).join('')}</tbody></table></div>`;
+}
+function renderCadastroVeiculos(){
+  const ed = S.editVeiculo;
+  return `
+  <div class="card">
+    <div class="muted" style="margin-bottom:10px;font-weight:700;">${ed?'Editando veículo':'Novo veículo'}</div>
+    <form onsubmit="event.preventDefault();${ed?'salvarEdicaoVeiculo(this)':'criarVeiculo(this)'};">
+      <div class="form-grid">
+        <div class="field"><label>Placa</label><input name="placa" value="${esc(ed?.placa||'')}"></div>
+        <div class="field"><label>Código do Ativo</label><input name="codigo_ativo" value="${esc(ed?.codigo_ativo||'')}"></div>
+        <div class="field field-span2"><label>Tipo</label>${chipGroup('tipo',VEICULO_TIPOS.map(t=>[t,t]),ed?.tipo||'')}</div>
+        <div class="field"><label>Marca</label><input name="marca" value="${esc(ed?.marca||'')}"></div>
+        <div class="field"><label>Modelo</label><input name="modelo" value="${esc(ed?.modelo||'')}"></div>
+        <div class="field"><label>Ano</label><input type="number" name="ano" value="${ed?.ano||''}"></div>
+        <div class="field"><label>Empresa Subcontratada</label><input name="empresa_subcontratada" value="${esc(ed?.empresa_subcontratada||'')}"></div>
+        <div class="field"><label>Obra</label><select name="obra_id">${opt(S.obras.map(o=>[o.id,o.nome]),ed?.obra_id,true)}</select></div>
+        ${ed?`<div class="field"><label>Status</label><select name="status"><option value="ativo" ${ed.status==='ativo'?'selected':''}>Ativo</option><option value="inativo" ${ed.status==='inativo'?'selected':''}>Inativo</option></select></div>`:''}
+      </div>
+      <div class="flex-row" style="margin-top:12px;">
+        <button class="btn btn-primary">${ed?'Salvar alterações':'Cadastrar Veículo'}</button>
+        ${ed?`<button type="button" class="btn btn-secondary" onclick="cancelarEdicaoVeiculo()">Cancelar</button>`:''}
+      </div>
+    </form>
+  </div>
+  <div class="table-scroll"><table class="mega-table"><thead><tr><th>Placa</th><th>Ativo</th><th>Tipo</th><th>Marca/Modelo</th><th>Obra</th><th>Status</th><th></th></tr></thead>
+  <tbody>${S.veiculos.map(v=>`<tr><td class="mono">${esc(v.placa||'—')}</td><td class="mono">${esc(v.codigo_ativo||'—')}</td><td>${esc(v.tipo||'—')}</td>
+    <td>${esc(v.marca||'')} ${esc(v.modelo||'')}</td><td>${esc(obraMap()[v.obra_id]?.nome||'—')}</td><td>${badge(v.status==='ativo'?'ok':'critico',v.status)}</td>
+    <td><button class="btn-icon" onclick="iniciarEdicaoVeiculo('${v.id}')">✏️</button> <button class="btn-icon danger" onclick="excluirVeiculo('${v.id}')">🗑</button></td></tr>`).join('') || `<tr><td colspan="7" class="empty-state">Nenhum veículo cadastrado.</td></tr>`}</tbody></table></div>`;
+}
+function renderCadastroEquipamentos(){
+  const ed = S.editEquipamento;
+  return `
+  <div class="card">
+    <div class="muted" style="margin-bottom:10px;font-weight:700;">${ed?'Editando equipamento':'Novo equipamento'}</div>
+    <form onsubmit="event.preventDefault();${ed?'salvarEdicaoEquipamento(this)':'criarEquipamento(this)'};">
+      <div class="form-grid">
+        <div class="field"><label>Nome *</label><input name="nome" required value="${esc(ed?.nome||'')}"></div>
+        <div class="field"><label>Código do Ativo</label><input name="codigo_ativo" value="${esc(ed?.codigo_ativo||'')}"></div>
+        <div class="field field-span2"><label>Tipo</label>${chipGroup('tipo',EQUIPAMENTO_TIPOS.map(t=>[t,t]),ed?.tipo||'')}</div>
+        <div class="field"><label>Empresa Subcontratada</label><input name="empresa_subcontratada" value="${esc(ed?.empresa_subcontratada||'')}"></div>
+        <div class="field"><label>Obra</label><select name="obra_id">${opt(S.obras.map(o=>[o.id,o.nome]),ed?.obra_id,true)}</select></div>
+        ${ed?`<div class="field"><label>Status</label><select name="status"><option value="ativo" ${ed.status==='ativo'?'selected':''}>Ativo</option><option value="inativo" ${ed.status==='inativo'?'selected':''}>Inativo</option></select></div>`:''}
+      </div>
+      <div class="flex-row" style="margin-top:12px;">
+        <button class="btn btn-primary">${ed?'Salvar alterações':'Cadastrar Equipamento'}</button>
+        ${ed?`<button type="button" class="btn btn-secondary" onclick="cancelarEdicaoEquipamento()">Cancelar</button>`:''}
+      </div>
+    </form>
+  </div>
+  <div class="table-scroll"><table class="mega-table"><thead><tr><th>Nome</th><th>Ativo</th><th>Tipo</th><th>Obra</th><th>Status</th><th></th></tr></thead>
+  <tbody>${S.equipamentos.map(e=>`<tr><td>${esc(e.nome)}</td><td class="mono">${esc(e.codigo_ativo||'—')}</td><td>${esc(e.tipo||'—')}</td>
+    <td>${esc(obraMap()[e.obra_id]?.nome||'—')}</td><td>${badge(e.status==='ativo'?'ok':'critico',e.status)}</td>
+    <td><button class="btn-icon" onclick="iniciarEdicaoEquipamento('${e.id}')">✏️</button> <button class="btn-icon danger" onclick="excluirEquipamento('${e.id}')">🗑</button></td></tr>`).join('') || `<tr><td colspan="6" class="empty-state">Nenhum equipamento cadastrado.</td></tr>`}</tbody></table></div>`;
+}
+
+/* ==========================================================
+   RENDER — PERMISSÕES
+   ========================================================== */
+function renderPermissoes(){
+  return `<div class="wrap">
+    <div class="section-header">Permissões de Acesso</div>
+    <div class="table-scroll"><table class="mega-table"><thead><tr><th>Nome</th><th>Perfil</th><th>Módulos liberados</th><th></th></tr></thead>
+    <tbody>${S.usuarios.map(u=>{
+      const perms = (u.permissoes&&Object.keys(u.permissoes).length)?u.permissoes:defaultPermissoes(u.perfil);
+      const ativos = MODULES.filter(([k])=>perms[k]).map(([,l])=>l).join(', ')||'—';
+      return `<tr><td>${esc(u.nome)}</td><td>${PERFIL_LABELS[u.perfil]}</td><td style="font-size:12px;">${esc(ativos)}</td>
+      <td><button class="btn-icon" onclick="iniciarEdicaoPermissoes('${u.id}')">⚙️</button></td></tr>`;
+    }).join('')}</tbody></table></div>
+    ${S.editPermUserId?renderEditPermForm():''}
+  </div>`;
+}
+function renderEditPermForm(){
+  const u = S.usuarios.find(x=>x.id===S.editPermUserId);
+  if(!u) return '';
+  const perms = (u.permissoes&&Object.keys(u.permissoes).length)?u.permissoes:defaultPermissoes(u.perfil);
+  return `<div class="card">
+    <div class="muted" style="font-weight:700;margin-bottom:10px;">Permissões de ${esc(u.nome)}</div>
+    <form onsubmit="event.preventDefault();salvarPermissoes(this,'${u.id}');">
+      <div class="form-grid">
+        ${MODULES.map(([k,l])=>`<label class="perm-check"><input type="checkbox" name="perm_${k}" ${perms[k]?'checked':''}> ${l}</label>`).join('')}
+      </div>
+      <div class="flex-row" style="margin-top:14px;">
+        <button class="btn btn-primary">Salvar permissões</button>
+        <button type="button" class="btn btn-secondary" onclick="cancelarEdicaoPermissoes()">Cancelar</button>
+      </div>
+    </form>
+  </div>`;
+}
+
+/* ==========================================================
+   RENDER — CHECKLISTS DE SEGURANÇA
+   ========================================================== */
+function renderChecklists(){
+  return `<div class="wrap">
+    <div class="section-header">Checklists de Segurança (SSTMA)
+      <div class="flex-row">
+        <button class="btn ${S.checklistView==='novo'?'btn-primary':'btn-secondary'} btn-sm" onclick="S.checklistView='novo';render()">+ Novo</button>
+        <button class="btn ${S.checklistView==='historico'?'btn-primary':'btn-secondary'} btn-sm" onclick="S.checklistView='historico';loadChecklists().then(render);">Histórico</button>
+      </div>
+    </div>
+    ${S.checklistView==='novo'?renderChecklistNovo():''}
+    ${S.checklistView==='historico'?renderChecklistHistorico():''}
+    ${S.checklistView==='detalhe'?renderChecklistDetalheView():''}
+  </div>`;
+}
+function renderChecklistNovo(){
+  return `<form class="card" onsubmit="event.preventDefault();salvarChecklist(this);">
+    <div class="field" style="margin-bottom:14px;"><label>Tipo de Checklist</label>${chipGroup('checklist_tipo_display',CHECKLIST_TIPOS,S.checklistTipo,'selectChecklistTipo')}</div>
+    <div class="form-grid">
+      <div class="field"><label>Obra</label><select name="obra_id">${opt(S.obras.map(o=>[o.id,o.nome]),'',true)}</select></div>
+      <div class="field"><label>Contrato</label><input name="contrato"></div>
+      <div class="field"><label>Setor/Área</label><input name="setor_area"></div>
+      <div class="field field-span2"><label>Tipo de Inspeção</label>${chipGroup('tipo_inspecao',[['rotineira','Rotineira'],['programada','Programada'],['eventual','Eventual']],'rotineira')}</div>
+      <div class="field"><label>Veículo (se aplicável)</label><select name="veiculo_id">${opt(S.veiculos.map(v=>[v.id,(v.placa||v.codigo_ativo||'Veículo')]),'',true)}</select></div>
+      <div class="field"><label>Equipamento (se aplicável)</label><select name="equipamento_id">${opt(S.equipamentos.map(e=>[e.id,e.nome]),'',true)}</select></div>
+      <div class="field"><label>Motorista/Colaborador</label><input name="motorista_colaborador" value="${esc(S.user.nome)}"></div>
+      <div class="field"><label>Matrícula</label><input name="matricula"></div>
+      <div class="field field-span3"><label>Processo/Atividade a ser inspecionada</label><input name="processo_atividade"></div>
+    </div>
+    <div class="divider"></div>
+    <div id="checklist-itens-container">${renderChecklistItensHTML(S.checklistTipo)}</div>
+    <div class="divider"></div>
+    <div class="field" style="margin-bottom:14px;"><label>Resultado da Inspeção</label>${chipGroup('resultado_geral',RESULTADO_OPTS,'conforme_liberado')}</div>
+    <button class="btn btn-primary" ${S.loading?'disabled':''}>${S.loading?'Salvando…':'Salvar Checklist'}</button>
+  </form>`;
+}
+function renderChecklistHistorico(){
+  if(S.checklists.length===0 && !S.loading){ loadChecklists().then(render); }
+  const om=obraMap(), vm=veiculoMap(), em=equipamentoMap();
+  return `<div class="table-scroll"><table class="mega-table">
+    <thead><tr><th>Data</th><th>Tipo</th><th>Veículo/Equip.</th><th>Obra</th><th>Resultado</th><th></th></tr></thead>
+    <tbody>${S.checklists.map(c=>`<tr class="clickable" onclick="abrirChecklist('${c.id}')">
+      <td>${fmtDateOnly(c.data_inspecao)}</td><td>${(CHECKLIST_TIPOS.find(t=>t[0]===c.tipo)||[,c.tipo])[1]}</td>
+      <td>${esc(vm[c.veiculo_id]?.placa||em[c.equipamento_id]?.nome||'—')}</td><td>${esc(om[c.obra_id]?.nome||'—')}</td>
+      <td>${resultadoBadge(c.resultado_geral)}</td>
+      <td><button class="btn-icon danger" onclick="event.stopPropagation();excluirChecklist('${c.id}')">🗑</button></td></tr>`).join('') || `<tr><td colspan="6" class="empty-state">Nenhum checklist registrado.</td></tr>`}
+    </tbody></table></div>`;
+}
+function renderChecklistDetalheView(){
+  const c = S.currentChecklist; if(!c) return '';
+  const om=obraMap(), vm=veiculoMap(), em=equipamentoMap(), um=usuMap();
+  return `<div class="card">
+    <button class="btn btn-secondary btn-sm" onclick="S.checklistView='historico';render()">← Voltar</button>
+    <div class="divider"></div>
+    <div class="form-grid" style="font-size:13px;">
+      <div><b>Tipo:</b> ${(CHECKLIST_TIPOS.find(t=>t[0]===c.tipo)||[,c.tipo])[1]}</div>
+      <div><b>Data:</b> ${fmtDateOnly(c.data_inspecao)}</div>
+      <div><b>Obra:</b> ${esc(om[c.obra_id]?.nome||'—')}</div>
+      <div><b>Veículo/Equipamento:</b> ${esc(vm[c.veiculo_id]?.placa||em[c.equipamento_id]?.nome||'—')}</div>
+      <div><b>Responsável:</b> ${esc(um[c.usuario_id]?.nome||c.motorista_colaborador||'—')}</div>
+      <div><b>Resultado:</b> ${resultadoBadge(c.resultado_geral)}</div>
+    </div>
+    <div class="divider"></div>
+    <div class="table-scroll"><table class="mega-table"><thead><tr><th>#</th><th>Item</th><th>Resposta</th><th>Pendência</th></tr></thead>
+    <tbody>${S.currentChecklistItens.map(it=>`<tr><td>${it.item_numero}</td><td>${esc(it.item_texto)}</td>
+      <td>${badge(it.resposta==='ok'?'ok':it.resposta==='pendente'?'critico':'concluido',it.resposta.toUpperCase())}</td>
+      <td>${esc(it.descricao_pendencia||'—')}</td></tr>`).join('')}</tbody></table></div>
+  </div>`;
+}
+
+/* ==========================================================
+   RENDER PRINCIPAL
+   ========================================================== */
+function render(){
+  const app = document.getElementById('app');
+  if(!S.user){ app.innerHTML = renderLogin(); return; }
+  let body='';
+  if(S.view==='dashboard') body=renderDashboard();
+  else if(S.view==='lista') body=renderLista();
+  else if(S.view==='nova') body=renderNovaOS();
+  else if(S.view==='cadastros') body=renderCadastros();
+  else if(S.view==='checklists') body=renderChecklists();
+  else if(S.view==='permissoes') body=renderPermissoes();
+  else if(S.view==='detalhe') body=renderDetalheOS();
+  app.innerHTML = renderHeader() + body + (S.loading?'<div class="spinner"></div>':'');
+  if(S.view==='nova'){
+    const c = document.getElementById('itens-container');
+    if(c && c.children.length===0) addItemRow('itens-container');
+  }
+}
+render();
+</script>
+</body>
+</html>
